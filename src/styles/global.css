@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
+
+:root {
+  --page-gradient: linear-gradient(160deg, #faf9f7 0%, #f3f1ee 45%, #ebe8e4 100%);
+  --hero-glow: radial-gradient(
+    ellipse 80% 60% at 50% 0%,
+    rgba(139, 92, 246, 0.14) 0%,
+    transparent 70%
+  );
+  --text-primary: #18181b;
+  --text-secondary: #475569;
+  --nav-height: 4.5rem;
+}
+
+html.dark {
+  --page-gradient: linear-gradient(135deg, #0a0b10 0%, #121420 45%, #1a1033 100%);
+  --hero-glow: radial-gradient(
+    ellipse 80% 60% at 50% 0%,
+    rgba(139, 92, 246, 0.32) 0%,
+    transparent 70%
+  );
+  --text-primary: #f5f3f0;
+  --text-secondary: #a8a29e;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--nav-height) + 1rem);
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  color: var(--text-primary);
+  background-color: #faf9f7;
+  background-image: var(--page-gradient);
+  background-attachment: fixed;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+html.dark body {
+  background-color: #0a0b10;
+  color: var(--text-primary);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
