@@ -6,39 +6,44 @@ export const FOCUS_MODES = [
   {
     id: 'Deep Work',
     description: 'Uninterrupted flow for demanding tasks.',
-    gradient: 'from-violet-600 to-purple-600',
-    badge: 'bg-violet-100 text-violet-900 dark:bg-violet-900/50 dark:text-violet-200',
+    gradient: 'from-primary to-accent',
+    badge: 'bg-blue-100 text-blue-950 dark:bg-blue-900/50 dark:text-icy-200',
   },
+
   {
     id: 'Study',
     description: 'Structured learning and revision blocks.',
-    gradient: 'from-blue-500 to-cyan-500',
-    badge: 'bg-blue-100 text-blue-900 dark:bg-blue-900/50 dark:text-blue-200',
+    gradient: 'from-primary to-ice-300',
+    badge: 'bg-blue-100 text-blue-950 dark:bg-blue-900/50 dark:text-icy-200',
   },
   {
     id: 'Meditation',
     description: 'Quiet mind, gentle awareness.',
-    gradient: 'from-indigo-500 to-violet-500',
-    badge: 'bg-indigo-100 text-indigo-900 dark:bg-indigo-900/50 dark:text-indigo-200',
+    gradient: 'from-cobalt-500 to-accent',
+    badge: 'bg-indigo-100 text-indigo-950 dark:bg-indigo-900/50 dark:text-icy-200',
   },
   {
     id: 'Breathing',
     description: 'Rhythmic breath to calm your nervous system.',
-    gradient: 'from-teal-500 to-emerald-500',
-    badge: 'bg-teal-100 text-teal-900 dark:bg-teal-900/50 dark:text-teal-200',
+    gradient: 'from-icy-400 to-cyan-400',
+    badge: 'bg-sky-100 text-blue-950 dark:bg-blue-900/50 dark:text-icy-200',
   },
+
+
   {
     id: 'Relax',
     description: 'Soft rest without pressure to perform.',
-    gradient: 'from-rose-400 to-pink-500',
-    badge: 'bg-rose-100 text-rose-900 dark:bg-rose-900/50 dark:text-rose-200',
+    gradient: 'from-cobalt-400 to-primary',
+    badge: 'bg-blue-100 text-blue-950 dark:bg-blue-900/50 dark:text-icy-200',
   },
+
   {
     id: 'Night Focus',
     description: 'Low-stimulus focus for evening hours.',
-    gradient: 'from-slate-600 to-indigo-800',
-    badge: 'bg-slate-200 text-slate-800 dark:bg-slate-800/60 dark:text-slate-200',
+    gradient: 'from-navy-700 to-primary',
+    badge: 'bg-slate-200 text-slate-800 dark:bg-blue-900/50 dark:text-icy-200',
   },
+
 ]
 
 export const FOCUS_QUOTES = [
