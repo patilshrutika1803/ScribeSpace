@@ -82,16 +82,16 @@ function BreathingCircle({ timerActive }) {
         animate={{
           scale: phase.scale,
           boxShadow: timerActive
-            ? '0 0 48px rgba(139, 92, 246, 0.45)'
-            : '0 0 24px rgba(139, 92, 246, 0.2)',
+                ? '0 0 48px rgba(37, 99, 235, 0.40)'
+                : '0 0 24px rgba(37, 99, 235, 0.18)',
         }}
         transition={{ duration: phase.duration, ease: 'easeInOut' }}
-        className="flex h-40 w-40 items-center justify-center rounded-full bg-gradient-to-br from-teal-400/30 via-violet-500/25 to-purple-600/35 ring-2 ring-violet-400/30"
+        className="flex h-40 w-40 items-center justify-center rounded-full bg-gradient-to-br from-ice-400/30 via-primary-2/25 to-accent-2/35 ring-2 ring-primary/35"
       >
         <motion.div
           animate={{ scale: phase.scale }}
           transition={{ duration: phase.duration, ease: 'easeInOut' }}
-          className="flex h-28 w-28 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-purple-600 shadow-xl"
+          className="flex h-28 w-28 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent shadow-xl"
         >
           <Wind className="h-10 w-10 text-white" />
         </motion.div>
@@ -100,10 +100,11 @@ function BreathingCircle({ timerActive }) {
         key={phase.label}
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mt-6 text-lg font-medium text-violet-700 dark:text-violet-300"
+        className="mt-6 text-lg font-medium text-primary dark:text-icy-300"
       >
         {phase.label}
       </motion.p>
+
       <p className={`mt-1 text-sm ${bodyText}`}>Breathe with the orb — 4s per phase</p>
     </div>
   )
@@ -223,7 +224,7 @@ export default function Focus() {
       >
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-4">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-purple-600 shadow-lg shadow-violet-500/25">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/25">
               <Target className="h-7 w-7 text-white" />
             </div>
             <div>
@@ -235,7 +236,7 @@ export default function Focus() {
             </div>
           </div>
           {!isFullscreen && (
-            <Link to="/dashboard" className="text-sm font-medium text-violet-700 dark:text-violet-300">
+            <Link to="/dashboard" className="text-sm font-medium text-primary dark:text-icy-300">
               ← Dashboard
             </Link>
           )}
@@ -245,7 +246,7 @@ export default function Focus() {
       <motion.blockquote
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="mb-8 rounded-2xl border border-violet-200/50 bg-white/80 px-6 py-5 shadow-sm backdrop-blur-xl dark:border-violet-500/20 dark:bg-zinc-900/60"
+        className="mb-8 rounded-2xl border border-blue-200/50 bg-white/80 px-6 py-5 shadow-sm backdrop-blur-xl dark:border-primary-2/20 dark:bg-zinc-900/60"
       >
         <p className="font-serif text-lg italic leading-relaxed text-zinc-800 dark:text-stone-200">
           &ldquo;{quote}&rdquo;
@@ -261,7 +262,7 @@ export default function Focus() {
             onClick={() => setAmbient(a)}
             className={`rounded-full px-3 py-1.5 text-xs font-medium capitalize transition-all duration-300 ${
               ambient === a
-                ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-md'
+                ? 'bg-gradient-to-r from-primary to-accent text-white shadow-md'
                 : 'border border-stone-200 bg-white/90 dark:border-white/10 dark:bg-zinc-800'
             }`}
           >
@@ -299,8 +300,8 @@ export default function Focus() {
             variants={staggerItem}
             className={`${card} flex items-center gap-4 ${stat.glow ? 'shadow-lg shadow-amber-500/10 ring-1 ring-amber-400/25' : ''}`}
           >
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-100 dark:bg-violet-900/40">
-              <stat.icon className="h-5 w-5 text-violet-700 dark:text-violet-300" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-ice-100 dark:bg-blue-950/35">
+              <stat.icon className="h-5 w-5 text-primary dark:text-icy-300" />
             </div>
             <div>
               <p className={`text-xs uppercase tracking-wider ${bodyText}`}>{stat.label}</p>
@@ -336,11 +337,11 @@ export default function Focus() {
                 whileTap={{ scale: 0.98 }}
                 className={`rounded-2xl border p-4 text-left transition-all duration-300 ${
                   selected
-                    ? `border-transparent bg-gradient-to-br ${m.gradient} text-white shadow-lg shadow-violet-500/20`
-                    : 'border-stone-200/90 bg-white/90 hover:border-violet-300 dark:border-white/10 dark:bg-zinc-900/70'
+            ? `border-transparent bg-gradient-to-br ${m.gradient} text-white shadow-lg shadow-primary/20`
+                    : 'border-stone-200/90 bg-white/90 hover:border-blue-300 dark:border-white/10 dark:bg-zinc-900/70'
                 } ${timerRunning ? 'opacity-60' : 'hover:-translate-y-0.5'}`}
               >
-                <Icon className={`mb-2 h-6 w-6 ${selected ? 'text-white' : 'text-violet-600 dark:text-violet-300'}`} />
+                <Icon className={`mb-2 h-6 w-6 ${selected ? 'text-white' : 'text-primary dark:text-icy-300'}`} />
                 <p className={`font-semibold ${selected ? 'text-white' : 'text-zinc-900 dark:text-stone-50'}`}>{m.id}</p>
                 <p className={`mt-1 text-xs ${selected ? 'text-white/90' : bodyText}`}>{m.description}</p>
               </motion.button>
@@ -357,7 +358,7 @@ export default function Focus() {
               : { boxShadow: '0 10px 40px rgba(0,0,0,0.08)' }
           }
           transition={{ duration: 0.5 }}
-          className={`${cardSoft} ${timerActive ? 'ring-2 ring-violet-400/40' : ''}`}
+          className={`${cardSoft} ${timerActive ? 'ring-2 ring-primary/40' : ''}` }
         >
           <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
             <span className={`rounded-full px-3 py-1 text-xs font-medium ${modeConfig.badge}`}>{mode}</span>
@@ -375,7 +376,7 @@ export default function Focus() {
                 onClick={() => setPreset(min)}
                 className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 ${
                   durationMin === min
-                    ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-md'
+                    ? 'bg-gradient-to-r from-primary to-accent text-white shadow-md'
                     : 'border border-stone-200/90 bg-white dark:border-white/10 dark:bg-zinc-800'
                 }`}
               >
@@ -387,8 +388,8 @@ export default function Focus() {
           <div className="relative mx-auto mb-8 flex h-64 w-64 items-center justify-center">
             {timerActive && (
               <motion.div
-                className="absolute inset-4 rounded-full bg-violet-500/10 blur-2xl"
-                animate={{ opacity: [0.3, 0.6, 0.3] }}
+                className="absolute inset-4 rounded-full bg-primary/15 blur-2xl"
+                  animate={{ opacity: [0.3, 0.6, 0.3] }}
                 transition={{ duration: 2, repeat: Infinity }}
               />
             )}
@@ -401,7 +402,7 @@ export default function Focus() {
                 fill="none"
                 strokeWidth="10"
                 strokeLinecap="round"
-                className="stroke-violet-600 dark:stroke-violet-400"
+                className="stroke-primary dark:stroke-icy-300"
                 strokeDasharray={circumference}
                 animate={{ strokeDashoffset: strokeOffset }}
                 transition={{ duration: 0.35, ease: 'easeOut' }}

@@ -61,7 +61,7 @@ export default function Dashboard() {
       >
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex items-start gap-4">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-purple-600 shadow-lg shadow-violet-500/25">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/25">
               <Sparkles className="h-7 w-7 text-white" />
             </div>
             <div>
@@ -72,7 +72,7 @@ export default function Dashboard() {
               <p className={`mt-3 max-w-2xl text-base ${bodyText}`}>{data.greeting.tone}</p>
             </div>
           </div>
-          <blockquote className="max-w-sm rounded-2xl border border-violet-200/50 bg-white/60 px-5 py-4 backdrop-blur-sm dark:border-violet-500/20 dark:bg-zinc-900/50">
+          <blockquote className="max-w-sm rounded-2xl border border-blue-200/50 bg-white/60 px-5 py-4 backdrop-blur-sm dark:border-primary-2/20 dark:bg-zinc-900/50">
             <p className="font-serif text-base italic leading-relaxed text-zinc-800 dark:text-stone-200">
               &ldquo;{data.quote}&rdquo;
             </p>
@@ -117,8 +117,8 @@ export default function Dashboard() {
               stat.glow ? 'ring-1 ring-amber-400/30 dark:ring-amber-500/20' : ''
             }`}
           >
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-violet-100 dark:bg-violet-900/40">
-              <stat.icon className="h-5 w-5 text-violet-700 dark:text-violet-300" />
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-ice-100 dark:bg-blue-950/35">
+              <stat.icon className="h-5 w-5 text-primary dark:text-icy-300" />
             </div>
             <div className="min-w-0">
               <p className={`text-xs uppercase tracking-wider ${bodyText}`}>{stat.label}</p>
@@ -149,7 +149,7 @@ export default function Dashboard() {
             {data.latestJournal.title}
           </h2>
           <p className={`mt-2 text-sm ${bodyText}`}>{data.latestJournal.preview}</p>
-          <span className="mt-3 inline-block rounded-full bg-violet-100 px-3 py-1 text-xs font-medium text-violet-800 dark:bg-violet-900/40 dark:text-violet-200">
+          <span className="mt-3 inline-block rounded-full bg-ice-100 px-3 py-1 text-xs font-medium text-cobalt-500 dark:bg-blue-950/35 dark:text-icy-200">
             {data.latestJournal.mood}
           </span>
           <Link to="/journal" className={`${btnGradient} mt-4 inline-flex text-sm`}>
@@ -166,7 +166,7 @@ export default function Dashboard() {
       >
         {modules.map((item) => (
           <motion.article key={item.title} variants={staggerItem} className={cardInteractive}>
-            <item.icon className="mb-4 h-8 w-8 text-violet-700 transition-transform duration-300 group-hover:scale-110 dark:text-violet-300" />
+            <item.icon className="mb-4 h-8 w-8 text-primary transition-transform duration-300 group-hover:scale-110 dark:text-icy-300" />
             <h2 className="font-serif text-xl font-semibold text-zinc-900 dark:text-stone-50">
               {item.title}
             </h2>

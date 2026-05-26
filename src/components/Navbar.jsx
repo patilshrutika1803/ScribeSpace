@@ -37,7 +37,7 @@ function NavItem({ to, label, end, onClick }) {
           <span
             className={`text-sm font-medium transition-colors duration-300 ${
               isActive
-                ? 'text-violet-700 dark:text-violet-300'
+                ? 'text-primary dark:text-icy-300'
                 : 'text-slate-600 hover:text-zinc-900 dark:text-stone-400 dark:hover:text-stone-50'
             }`}
           >
@@ -46,7 +46,7 @@ function NavItem({ to, label, end, onClick }) {
           {isActive && (
             <motion.span
               layoutId="nav-underline"
-              className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-violet-500 to-purple-500 shadow-[0_0_12px_rgba(139,92,246,0.6)]"
+              className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-primary to-accent shadow-[0_0_12px_rgba(37,99,235,0.55)]"
             />
           )}
         </>
@@ -75,7 +75,7 @@ export default function Navbar() {
         <Link to={logoTo} className="shrink-0" onClick={() => setMobileOpen(false)}>
           <span className="font-serif text-xl font-semibold tracking-tight text-zinc-900 sm:text-2xl dark:text-stone-50">
             Scribe
-            <span className="bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent dark:from-violet-300 dark:to-purple-300">
+            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent dark:from-primary-2 dark:to-accent-2">
               Space
             </span>
           </span>

@@ -11,7 +11,7 @@ export default function ThemeToggle() {
       onClick={toggleTheme}
       aria-label={`Switch theme. Current: ${themeName}`}
       title={themeName}
-      className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white text-zinc-900 shadow-md transition-all duration-300 hover:border-violet-400 hover:shadow-lg dark:border-white/10 dark:bg-zinc-900 dark:text-stone-50"
+      className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white text-zinc-900 shadow-md transition-all duration-300 hover:border-blue-300 hover:shadow-lg dark:border-white/10 dark:bg-zinc-900 dark:text-stone-50"
       whileTap={{ scale: 0.92 }}
       whileHover={{ scale: 1.05 }}
     >
@@ -22,7 +22,7 @@ export default function ThemeToggle() {
         transition={{ duration: 0.25 }}
       >
         {isDark ? (
-          <Moon className="h-4 w-4 text-violet-300" />
+          <Moon className="h-4 w-4 text-icy-300" />
         ) : (
           <Sun className="h-4 w-4 text-amber-600" />
         )}

@@ -35,8 +35,9 @@ export default function Hero() {
           variants={item}
           className="mb-6 inline-flex items-center gap-2 rounded-full border border-stone-200 bg-white/90 px-4 py-2 text-sm text-slate-600 shadow-sm backdrop-blur-sm dark:border-white/10 dark:bg-zinc-900/70 dark:text-stone-400"
         >
-          <Sparkles className="h-4 w-4 text-violet-700 dark:text-violet-300" />
+          <Sparkles className="h-4 w-4 text-primary dark:text-icy-300" />
           <span>Emotional AI wellness, reimagined</span>
+
         </motion.div>
 
         <motion.h1
@@ -45,7 +46,7 @@ export default function Hero() {
         >
           From mental chaos
           <br />
-          <span className="bg-gradient-to-r from-violet-700 to-purple-600 bg-clip-text text-transparent dark:from-violet-300 dark:to-purple-300">
+          <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent dark:from-primary-2 dark:to-accent-2">
             to clarity
           </span>
         </motion.h1>
@@ -73,7 +74,7 @@ export default function Hero() {
       </motion.div>
 
       <motion.div
-        className="absolute bottom-8 left-1/2 h-12 w-px -translate-x-1/2 bg-gradient-to-b from-violet-500/40 to-transparent dark:from-violet-400/50"
+        className="absolute bottom-8 left-1/2 h-12 w-px -translate-x-1/2 bg-gradient-to-b from-primary/40 to-transparent dark:from-primary-2/50"
         animate={{ opacity: [0.3, 1, 0.3] }}
         transition={{ duration: 2.5, repeat: Infinity }}
         aria-hidden
