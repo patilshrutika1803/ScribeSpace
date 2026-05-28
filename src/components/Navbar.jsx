@@ -34,11 +34,11 @@ function NavItem({ to, label, end, onClick }) {
     <NavLink to={to} end={end} onClick={onClick} className="relative py-1">
       {({ isActive }) => (
         <>
-<span
+          <span
             className={`text-sm font-medium transition-colors duration-300 ${
               isActive
-                ? 'text-primary dark:text-icy-300'
-                : 'text-slate-700 hover:text-zinc-900 dark:text-stone-400 dark:hover:text-stone-50'
+                ? 'text-primary dark:text-ice-100'
+                : 'text-slate-700 hover:text-zinc-900 dark:text-stone-100 dark:hover:text-white'
             }`}
           >
             {label}
@@ -46,7 +46,8 @@ function NavItem({ to, label, end, onClick }) {
           {isActive && (
             <motion.span
               layoutId="nav-underline"
-              className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-primary to-accent shadow-[0_0_12px_rgba(37,99,235,0.55)]"
+              initial={false}
+              className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-primary to-accent shadow-[0_0_12px_rgba(167,139,250,0.55)] dark:shadow-[0_0_18px_rgba(167,139,250,0.7)]"
             />
           )}
         </>
@@ -74,7 +75,7 @@ export default function Navbar() {
       <nav className="mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <Link to={logoTo} className="shrink-0" onClick={() => setMobileOpen(false)}>
           <span className="font-serif text-xl font-semibold tracking-tight text-zinc-900 sm:text-2xl dark:text-stone-50">
-            Scribe
+            <span className="text-zinc-900 dark:text-white">Scribe</span>
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent dark:from-primary-2 dark:to-accent-2">
               Space
             </span>
