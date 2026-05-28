@@ -33,10 +33,10 @@ export const input =
 'w-full rounded-xl border border-stone-300/90 bg-white px-4 py-3 text-zinc-900 placeholder:text-slate-400 transition-all duration-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-primary/25 dark:border-white/15 dark:bg-zinc-950/50 dark:text-stone-100 dark:placeholder:text-stone-500 dark:focus:border-icy-400 dark:focus:ring-icy-400/25'
 
 export const btnGradient =
-'inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-primary to-accent px-6 py-3 text-sm font-medium text-white shadow-lg shadow-primary/20 transition-all duration-300 hover:from-primary-2 hover:to-accent-2 hover:shadow-xl hover:shadow-primary/30 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70 dark:from-primary-2 dark:to-accent-2 dark:hover:from-primary dark:hover:to-accent'
+'inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-primary to-accent px-6 py-3 text-sm font-medium text-white shadow-lg shadow-primary/20 transition-all duration-300 hover:from-primary-2 hover:to-accent-2 hover:shadow-xl hover:shadow-primary/30 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70 dark:from-primary-2 dark:to-accent-2 dark:hover:from-primary dark:hover:to-accent focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:ring-offset-[#f4f7fb] dark:focus:ring-offset-zinc-950'
 
 export const btnGhost =
-'inline-flex items-center justify-center gap-2 rounded-full border border-stone-300/90 bg-white/80 px-6 py-3 text-sm font-medium text-zinc-800 transition-all duration-300 hover:border-blue-200 hover:bg-stone-50 active:scale-[0.98] dark:border-white/10 dark:bg-transparent dark:text-stone-200 dark:hover:bg-zinc-800/60'
+'inline-flex items-center justify-center gap-2 rounded-full border border-slate-300/90 bg-[#f4f7fb]/80 px-6 py-3 text-sm font-medium text-slate-800 transition-all duration-300 hover:border-blue-300 hover:bg-white active:scale-[0.98] dark:border-white/10 dark:bg-transparent dark:text-stone-200 dark:hover:bg-zinc-800/60'
 
 export const iconWrap =
 'flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-ice-100 shadow-inner dark:bg-blue-950/35'

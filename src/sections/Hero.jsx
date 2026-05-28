@@ -13,7 +13,11 @@ const container = {
 
 const item = {
   hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+  },
 }
 
 export default function Hero() {
@@ -33,11 +37,10 @@ export default function Hero() {
       >
         <motion.div
           variants={item}
-          className="mb-6 inline-flex items-center gap-2 rounded-full border border-stone-200 bg-white/90 px-4 py-2 text-sm text-slate-600 shadow-sm backdrop-blur-sm dark:border-white/10 dark:bg-zinc-900/70 dark:text-stone-400"
+          className="mb-6 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-[#f4f7fb]/70 px-4 py-2 text-sm text-slate-700 shadow-sm backdrop-blur-sm dark:border-white/10 dark:bg-zinc-900/70 dark:text-stone-400"
         >
           <Sparkles className="h-4 w-4 text-primary dark:text-icy-300" />
           <span>Emotional AI wellness, reimagined</span>
-
         </motion.div>
 
         <motion.h1
@@ -53,7 +56,7 @@ export default function Hero() {
 
         <motion.p
           variants={item}
-          className={`mx-auto mt-6 max-w-2xl text-lg sm:text-xl ${bodyText}`}
+          className={`mx-auto mt-6 max-w-2xl text-lg sm:text-xl ${bodyText} text-slate-700/95`}
         >
           ScribeSpace is your cinematic sanctuary — a calm, immersive space where
           emotional intelligence meets thoughtful design.
@@ -82,3 +85,4 @@ export default function Hero() {
     </section>
   )
 }
+

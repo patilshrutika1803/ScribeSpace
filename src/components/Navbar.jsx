@@ -34,11 +34,11 @@ function NavItem({ to, label, end, onClick }) {
     <NavLink to={to} end={end} onClick={onClick} className="relative py-1">
       {({ isActive }) => (
         <>
-          <span
+<span
             className={`text-sm font-medium transition-colors duration-300 ${
               isActive
                 ? 'text-primary dark:text-icy-300'
-                : 'text-slate-600 hover:text-zinc-900 dark:text-stone-400 dark:hover:text-stone-50'
+                : 'text-slate-700 hover:text-zinc-900 dark:text-stone-400 dark:hover:text-stone-50'
             }`}
           >
             {label}
@@ -70,7 +70,7 @@ export default function Navbar() {
   const logoTo = role === 'admin' ? '/admin-dashboard' : '/'
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-stone-200/70 bg-white/75 shadow-sm backdrop-blur-2xl transition-colors duration-300 dark:border-white/10 dark:bg-zinc-950/80">
+<header className="fixed inset-x-0 top-0 z-50 border-b border-slate-200/70 bg-[#f4f7fb]/70 shadow-sm backdrop-blur-2xl transition-colors duration-300 dark:border-white/10 dark:bg-zinc-950/80">
       <nav className="mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <Link to={logoTo} className="shrink-0" onClick={() => setMobileOpen(false)}>
           <span className="font-serif text-xl font-semibold tracking-tight text-zinc-900 sm:text-2xl dark:text-stone-50">
@@ -112,7 +112,7 @@ export default function Navbar() {
           <button
             type="button"
             onClick={() => setMobileOpen((open) => !open)}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200/90 bg-white/90 text-zinc-900 shadow-md backdrop-blur-md dark:border-white/10 dark:bg-zinc-900/80 dark:text-stone-50"
+className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200/90 bg-[#f4f7fb]/90 text-zinc-900 shadow-md backdrop-blur-md dark:border-white/10 dark:bg-zinc-900/80 dark:text-stone-50"
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
           >
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
