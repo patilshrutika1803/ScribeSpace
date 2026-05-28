@@ -71,12 +71,12 @@ export default function Navbar() {
   const logoTo = role === 'admin' ? '/admin-dashboard' : '/'
 
   return (
-<header className="fixed inset-x-0 top-0 z-50 border-b border-slate-200/70 bg-[#f4f7fb]/70 shadow-sm backdrop-blur-2xl transition-colors duration-300 dark:border-white/10 dark:bg-zinc-950/80">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-slate-200/70 bg-[#f4f7fb]/70 shadow-sm backdrop-blur-2xl transition-colors duration-300 dark:border-white/10 dark:bg-zinc-950/80">
       <nav className="mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <Link to={logoTo} className="shrink-0" onClick={() => setMobileOpen(false)}>
-          <span className="font-serif text-xl font-semibold tracking-tight text-zinc-900 sm:text-2xl dark:text-stone-50">
-            <span className="text-zinc-900 dark:text-white">Scribe</span>
-            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent dark:from-primary-2 dark:to-accent-2">
+          <span className="font-serif text-xl font-semibold tracking-tight sm:text-2xl">
+            <span className="text-zinc-900 dark:text-stone-50">Scribe</span>
+            <span className="bg-gradient-to-r from-primary via-accent to-accent bg-clip-text text-transparent dark:from-primary dark:via-accent dark:to-accent-2 drop-shadow-[0_0_10px_rgba(167,139,250,0.35)]">
               Space
             </span>
           </span>

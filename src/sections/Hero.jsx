@@ -22,12 +22,74 @@ const item = {
 
 export default function Hero() {
   return (
-    <section className="relative flex min-h-[calc(100vh-5rem)] flex-col items-center justify-center overflow-hidden px-4 py-16 sm:px-6 lg:px-8">
+    <section className="relative flex min-h-[calc(100vh-5rem)] flex-col items-center justify-center overflow-hidden px-4 py-16 sm:px-6 lg:px-10">
+      {/* Cinematic ambient layers */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-80 transition-opacity duration-300"
-        style={{ background: 'var(--hero-glow)' }}
+        className="pointer-events-none absolute inset-0"
         aria-hidden
-      />
+      >
+        {/* Existing hero glow */}
+        <div
+          className="absolute inset-0 opacity-80 transition-opacity duration-300"
+          style={{ background: 'var(--hero-glow)' }}
+        />
+
+        {/* Animated premium blobs */}
+        <motion.div
+          className="absolute -top-28 left-1/2 h-[22rem] w-[22rem] -translate-x-1/2 rounded-full bg-gradient-to-tr from-primary/25 via-accent/15 to-transparent blur-3xl"
+          aria-hidden
+          animate={{
+            x: [-24, 24, -24],
+            y: [0, 18, 0],
+            opacity: [0.55, 0.85, 0.55],
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="absolute top-20 -left-24 h-[18rem] w-[18rem] rounded-full bg-gradient-to-tr from-accent/20 via-primary/10 to-transparent blur-3xl"
+          aria-hidden
+          animate={{
+            x: [0, 32, 0],
+            y: [0, -14, 0],
+            opacity: [0.4, 0.75, 0.4],
+          }}
+          transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="absolute -bottom-28 -right-24 h-[20rem] w-[20rem] rounded-full bg-gradient-to-tr from-primary/20 via-accent/10 to-transparent blur-3xl"
+          aria-hidden
+          animate={{
+            x: [0, -28, 0],
+            y: [0, 16, 0],
+            opacity: [0.35, 0.7, 0.35],
+          }}
+          transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut' }}
+        />
+
+        {/* Subtle stars / particles */}
+        <motion.div
+          className="absolute inset-0 opacity-[0.65]"
+          aria-hidden
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.65 }}
+          transition={{ duration: 0.9, delay: 0.2 }}
+        >
+          <div className="absolute left-[10%] top-[18%] h-1 w-1 rounded-full bg-primary/70 shadow-[0_0_18px_rgba(167,139,250,0.35)]" />
+          <div className="absolute left-[32%] top-[28%] h-1 w-1 rounded-full bg-accent/60 shadow-[0_0_16px_rgba(56,189,248,0.25)]" />
+          <div className="absolute left-[70%] top-[22%] h-1.5 w-1.5 rounded-full bg-primary/50 shadow-[0_0_18px_rgba(167,139,250,0.32)]" />
+          <div className="absolute left-[58%] top-[46%] h-1 w-1 rounded-full bg-accent/45 shadow-[0_0_16px_rgba(56,189,248,0.22)]" />
+          <div className="absolute left-[18%] top-[58%] h-1.5 w-1.5 rounded-full bg-primary/45 shadow-[0_0_18px_rgba(167,139,250,0.28)]" />
+          <div className="absolute left-[76%] top-[66%] h-1 w-1 rounded-full bg-accent/40 shadow-[0_0_16px_rgba(56,189,248,0.2)]" />
+          <motion.div
+            className="absolute left-[40%] top-[70%] h-0.5 w-0.5 rounded-full bg-white/40 shadow-[0_0_18px_rgba(255,255,255,0.35)]"
+            animate={{
+              y: [0, -10, 0],
+              opacity: [0.35, 0.85, 0.35],
+            }}
+            transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut' }}
+          />
+        </motion.div>
+      </div>
 
       <motion.div
         className="relative z-10 mx-auto max-w-4xl text-center"
