@@ -10,7 +10,7 @@ function readRole() {
   return role === 'user' || role === 'admin' ? role : null
 }
 
-export function AuthProvider({ children }) {
+export const AuthProvider = ({ children }) => {
   const [role, setRole] = useState(readRole)
 
   useEffect(() => {
@@ -54,3 +54,4 @@ export function useAuth() {
   }
   return context
 }
+

@@ -21,7 +21,7 @@ function applyTheme(theme) {
   root.setAttribute('data-theme', isDark ? 'midnight' : 'morning')
 }
 
-export function ThemeProvider({ children }) {
+export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(getInitialTheme)
 
   useEffect(() => {
@@ -41,9 +41,7 @@ export function ThemeProvider({ children }) {
     toggleTheme,
   }
 
-  return (
-    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
-  )
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
 }
 
 export function useTheme() {
@@ -53,3 +51,4 @@ export function useTheme() {
   }
   return context
 }
+
