@@ -1,26 +1,41 @@
 import { useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Loader2, UserPlus } from 'lucide-react'
+import { Loader2, UserPlus, AlertCircle } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { bodyText, btnGradient, cardSoft, headingDisplay, iconWrap, input, label } from '../constants/ui'
 
 export default function Signup() {
-  const { loginUser, isUser, isAdmin } = useAuth()
+  const { register, error, loading, isUser, isAdmin } = useAuth()
   const navigate = useNavigate()
-  const [loading, setLoading] = useState(false)
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [localError, setLocalError] = useState('')
 
   if (isUser) return <Navigate to="/dashboard" replace />
   if (isAdmin) return <Navigate to="/admin-dashboard" replace />
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    setLoading(true)
-    setTimeout(() => {
-      loginUser()
-      setLoading(false)
+    setLocalError('')
+
+    if (!name || !email || !password) {
+      setLocalError('Please fill in all fields')
+      return
+    }
+
+    if (password.length < 6) {
+      setLocalError('Password must be at least 6 characters')
+      return
+    }
+
+    const success = await register(name, email, password)
+    if (success) {
       navigate('/dashboard')
-    }, 900)
+    } else {
+      setLocalError(error || 'Registration failed')
+    }
   }
 
   return (
@@ -41,18 +56,52 @@ export default function Signup() {
           </p>
         </div>
 
+        {localError && (
+          <div className="mb-5 flex items-start gap-3 rounded-lg bg-red-50 p-3 dark:bg-red-900/20">
+            <AlertCircle className="h-5 w-5 flex-shrink-0 text-red-600 dark:text-red-400" />
+            <p className="text-sm text-red-700 dark:text-red-300">{localError}</p>
+          </div>
+        )}
+
         <form className="space-y-5" onSubmit={handleSubmit}>
           <div>
             <label htmlFor="name" className={label}>Full name</label>
-            <input id="name" type="text" required placeholder="Your name" className={input} autoComplete="name" />
+            <input
+              id="name"
+              type="text"
+              required
+              placeholder="Your name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className={input}
+              autoComplete="name"
+            />
           </div>
           <div>
             <label htmlFor="signup-email" className={label}>Email</label>
-            <input id="signup-email" type="email" required placeholder="you@example.com" className={input} autoComplete="email" />
+            <input
+              id="signup-email"
+              type="email"
+              required
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={input}
+              autoComplete="email"
+            />
           </div>
           <div>
             <label htmlFor="signup-password" className={label}>Password</label>
-            <input id="signup-password" type="password" required placeholder="••••••••" className={input} autoComplete="new-password" />
+            <input
+              id="signup-password"
+              type="password"
+              required
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={input}
+              autoComplete="new-password"
+            />
           </div>
           <button type="submit" disabled={loading} className={`${btnGradient} w-full`}>
             {loading ? (

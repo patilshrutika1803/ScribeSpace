@@ -75,8 +75,8 @@ export default function Navbar() {
       <nav className="mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <Link to={logoTo} className="shrink-0" onClick={() => setMobileOpen(false)}>
           <span className="font-serif text-xl font-semibold tracking-tight sm:text-2xl">
-            <span className="text-zinc-900 dark:text-stone-50">Scribe</span>
-            <span className="bg-gradient-to-r from-primary via-accent to-accent bg-clip-text text-transparent dark:from-primary dark:via-accent dark:to-accent-2 drop-shadow-[0_0_10px_rgba(167,139,250,0.35)]">
+            <span className="text-white">Scribe</span>
+            <span className="text-accent-2 drop-shadow-[0_0_12px_rgba(167,139,250,0.35)] dark:text-accent-2">
               Space
             </span>
           </span>

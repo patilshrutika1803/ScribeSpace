@@ -1,11 +1,14 @@
-# TODO — ScribeSpace Blue Wellness Theme Refactor
+# Frontend TODO - Dashboard UI Refinement
 
-- [ ] Update `frontend/src/constants/ui.js` to replace all lavender/violet/purple gradient/glow/border/shadow tokens with centralized blue wellness tokens (btnGradient, card variants, heroSection, input focus rings, iconWrap, headings).
-- [x] Update `frontend/src/utils/moodStorage.js` to swap mood-driven gradients/badges/rings from violet/purple into the new calm blue palette.
-
-- [x] Update `frontend/src/utils/focusStorage.js` to swap focus mode gradients/badges into the new midnight blues.
-- [x] Update `frontend/src/styles/global.css` + `frontend/src/index.css` to centralize CSS variables for dark/light themes (background, hero glow, text harmony) using the provided palette.
-
-- [ ] Update Tailwind config (`frontend/tailwind.config.js`) to add a small theme extension for color tokens used by existing classes (if needed) without breaking existing Tailwind usage.
-- [ ] Run a build/lint check (`npm test` / `npm run build` / `npm run lint` if available) and ensure no functionality break.
+- [ ] Refactor `src/pages/Dashboard.jsx`:
+  - [ ] Replace current analytics + quote + feature navigation layout with new compact structure.
+  - [ ] Create a responsive one-row analytics grid (6 cards: Journal Entries, Mood Streak, Today's Mood, Focus Hours, Wellness Score, Weekly Progress) using CSS Grid.
+  - [ ] Ensure each analytics card is height-constrained (100–120px), showing icon + large metric + small label.
+  - [ ] Remove large descriptions and “Open” links from analytics cards; use non-clickable or purely visual cards.
+  - [ ] Add subtle hover effects (lift + glow + border highlight) consistent with dark luxury/blue glow.
+  - [ ] Move Daily Quote into its own slim horizontal card directly below analytics row.
+  - [ ] Move feature navigation cards (Journal, Mood, Focus, Future Letters) below analytics + quote.
+  - [ ] Reduce overall vertical spacing to keep analytics + quote + feature shortcuts visible in first viewport.
+- [ ] Verify computations/data exist in `src/utils/dashboardStats.js` (add any missing fields for new 6-card analytics: Focus Hours, Wellness Score, Weekly Progress).
+- [ ] Run frontend lint/build/tests (or `npm run build`) to confirm no runtime errors.
 

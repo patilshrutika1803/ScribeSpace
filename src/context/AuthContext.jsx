@@ -1,8 +1,15 @@
 import { createContext, useContext, useEffect, useState } from 'react'
+import { api } from '../utils/api'
 
+const TOKEN_KEY = 'token'
 const ROLE_KEY = 'role'
 
 const AuthContext = createContext(null)
+
+function readToken() {
+  if (typeof window === 'undefined') return null
+  return localStorage.getItem(TOKEN_KEY)
+}
 
 function readRole() {
   if (typeof window === 'undefined') return null
@@ -11,36 +18,81 @@ function readRole() {
 }
 
 export const AuthProvider = ({ children }) => {
+  const [token, setToken] = useState(readToken)
   const [role, setRole] = useState(readRole)
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    const onStorage = () => setRole(readRole())
+    const onStorage = () => {
+      setToken(readToken())
+      setRole(readRole())
+    }
     window.addEventListener('storage', onStorage)
     return () => window.removeEventListener('storage', onStorage)
   }, [])
 
-  const loginUser = () => {
-    localStorage.setItem(ROLE_KEY, 'user')
-    setRole('user')
+  const register = async (name, email, password) => {
+    setError(null)
+    setLoading(true)
+    try {
+      const data = await api.register(name, email, password)
+      const authToken = data.token
+      const userRole = data.user.role
+      localStorage.setItem(TOKEN_KEY, authToken)
+      localStorage.setItem(ROLE_KEY, userRole)
+      api.setToken(authToken)
+      setToken(authToken)
+      setRole(userRole)
+      return true
+    } catch (err) {
+      setError(err.message)
+      return false
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const loginAdmin = () => {
-    localStorage.setItem(ROLE_KEY, 'admin')
-    setRole('admin')
+  const login = async (email, password) => {
+    setError(null)
+    setLoading(true)
+    try {
+      const data = await api.login(email, password)
+      const authToken = data.token
+      const userRole = data.user.role
+      localStorage.setItem(TOKEN_KEY, authToken)
+      localStorage.setItem(ROLE_KEY, userRole)
+      api.setToken(authToken)
+      setToken(authToken)
+      setRole(userRole)
+      return true
+    } catch (err) {
+      setError(err.message)
+      return false
+    } finally {
+      setLoading(false)
+    }
   }
 
   const logout = () => {
+    localStorage.removeItem(TOKEN_KEY)
     localStorage.removeItem(ROLE_KEY)
+    api.removeToken()
+    setToken(null)
     setRole(null)
+    setError(null)
   }
 
   const value = {
+    token,
     role,
+    error,
+    loading,
     isUser: role === 'user',
     isAdmin: role === 'admin',
-    isAuthenticated: role === 'user' || role === 'admin',
-    loginUser,
-    loginAdmin,
+    isAuthenticated: Boolean(token) && (role === 'user' || role === 'admin'),
+    register,
+    login,
     logout,
   }
 

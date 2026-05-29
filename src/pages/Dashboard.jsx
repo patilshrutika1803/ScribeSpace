@@ -1,6 +1,18 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { BookOpen, Clock, Flame, Heart, Mail, Sparkles, Target } from 'lucide-react'
+import {
+  BookOpen,
+  Clock,
+  Flame,
+  Heart,
+  Mail,
+  Sparkles,
+  Target,
+  Quote,
+  Shield,
+  BarChart3,
+} from 'lucide-react'
+
 import AnimatedCounter from '../components/AnimatedCounter'
 import { staggerContainer, staggerItem } from '../constants/motion'
 import {
@@ -12,9 +24,21 @@ import {
   pageShell,
   subheading,
 } from '../constants/ui'
+
+const premiumCardBase = `${cardInteractive} border-slate-200/70 bg-white/80 dark:bg-zinc-900/60`
+
+function formatPercent(n) {
+  const v = typeof n === 'number' ? n : Number(n)
+  if (!Number.isFinite(v)) return '—'
+  return `${Math.round(v)}%`
+}
+
+
 import { getDashboardInsights } from '../utils/dashboardStats'
 
 const modules = [
+
+
   {
     title: 'Journal',
     description: 'Write reflections, track moods, and revisit your thoughts.',
@@ -55,11 +79,33 @@ export default function Dashboard() {
   return (
     <div className={pageShell}>
       <motion.section
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
-        className={heroSection}
+        transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+        className={heroSection + ' relative overflow-hidden'}
       >
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+        {/* premium cinematic layer */}
+        <div
+          className="pointer-events-none absolute inset-0 opacity-100"
+          aria-hidden
+        >
+          <div
+            className="absolute inset-0 bg-gradient-to-br from-[#0B1633]/70 via-primary/10 to-accent/10"
+          />
+          <div
+            className="absolute -top-24 left-1/2 h-[26rem] w-[26rem] -translate-x-1/2 rounded-full bg-gradient-to-tr from-primary/25 via-accent/15 to-transparent blur-3xl"
+          />
+          <div
+            className="absolute right-[-10rem] top-[-6rem] h-64 w-64 rounded-full bg-gradient-to-tr from-accent/20 to-transparent blur-3xl"
+          />
+          <div
+            className="absolute inset-0 opacity-[0.55]"
+            style={{ backgroundImage: 'radial-gradient(circle at 30% 20%, rgba(167,139,250,0.22), transparent 55%), radial-gradient(circle at 70% 40%, rgba(56,189,248,0.18), transparent 55%)' }}
+          />
+        </div>
+
+        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+
           <div className="flex items-start gap-4">
             <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/25">
               <Sparkles className="h-7 w-7 text-white" />
@@ -80,55 +126,95 @@ export default function Dashboard() {
         </div>
       </motion.section>
 
+      {/* Analytics row (6 compact stats in ONE responsive row) */}
       <motion.div
         variants={staggerContainer}
         initial="hidden"
         animate="show"
-        className="mb-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
+        className="mb-4 grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6"
       >
         {[
-          { label: 'Journal entries', value: data.journalCount, icon: BookOpen, glow: false },
           {
-            label: 'Mood streak',
-            value: data.moodStreak,
-            suffix: 'd',
-            icon: Flame,
-            glow: data.moodStreak > 0,
+            label: 'Journal Entries',
+            value: data.journalCount,
+            icon: BookOpen,
+            accent: 'from-primary/30 via-accent/15 to-accent/0',
+            suffix: '',
           },
           {
-            label: "Today's mood",
+            label: 'Mood Streak',
+            value: data.moodStreak,
+            icon: Flame,
+            accent: 'from-amber-400/25 via-amber-300/15 to-transparent',
+            suffix: 'd',
+          },
+          {
+            label: "Today's Mood",
             value: data.todayMood ?? '—',
             icon: Heart,
-            isText: true,
-            glow: false,
+            accent: 'from-primary/25 via-accent/15 to-transparent',
+            textValue: true,
+            suffix: '',
           },
           {
-            label: 'Focus this week',
+            label: 'Focus Hours',
             value: data.focusWeekHours,
-            suffix: 'h',
             icon: Clock,
-            glow: false,
+            accent: 'from-accent/25 via-primary/15 to-transparent',
+            suffix: 'h',
+          },
+          {
+            label: 'Wellness Score',
+            value: formatPercent(
+              50 + (data.moodStreak || 0) * 4 + (Number(data.focusWeekHours) || 0) * 2
+            ),
+            icon: Shield,
+            accent: 'from-primary/25 via-cobalt-400/15 to-transparent',
+            suffix: '',
+          },
+          {
+            label: 'Weekly Progress',
+            value: formatPercent(
+              Math.min(100, 10 + (Number(data.journalCount) || 0) * 6)
+            ),
+            icon: BarChart3,
+            accent: 'from-accent/25 via-primary/15 to-transparent',
+            suffix: '',
           },
         ].map((stat) => (
           <motion.div
             key={stat.label}
             variants={staggerItem}
-            className={`${cardInteractive} flex items-center gap-4 ${
-              stat.glow ? 'ring-1 ring-amber-400/30 dark:ring-amber-500/20' : ''
-            }`}
+            whileHover={{ y: -3 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+            className={
+              `${cardInteractive} relative flex items-center gap-3 px-4 py-3 ` +
+              'h-[108px] min-h-[108px]'
+            }
           >
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-ice-100 dark:bg-blue-950/35">
+            <div
+              className={`pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-250 group-hover:opacity-100 bg-gradient-to-br ${stat.accent}`}
+              aria-hidden
+            />
+
+            <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ice-100/70 shadow-inner dark:bg-blue-950/30">
               <stat.icon className="h-5 w-5 text-primary dark:text-icy-300" />
             </div>
-            <div className="min-w-0">
-              <p className={`text-xs uppercase tracking-wider ${bodyText}`}>{stat.label}</p>
-              <p className="truncate text-lg font-semibold text-zinc-900 dark:text-stone-50">
-                {stat.isText ? (
-                  stat.value
+
+            <div className="min-w-0 flex-1">
+              <p className="text-xs uppercase tracking-widest text-slate-500 dark:text-stone-400">
+                {stat.label}
+              </p>
+
+              <p className="mt-1 truncate font-serif text-2xl font-semibold tracking-tight text-zinc-900 dark:text-stone-50">
+                {stat.textValue ? (
+                  <span>{stat.value}</span>
                 ) : (
                   <>
-                    <AnimatedCounter value={typeof stat.value === 'number' ? stat.value : 0} />
-                    {stat.suffix || ''}
+                    <AnimatedCounter
+                      value={typeof stat.value === 'number' ? stat.value : Number(stat.value) || 0}
+                    />
+                    {stat.suffix}
                   </>
                 )}
               </p>
@@ -137,24 +223,55 @@ export default function Dashboard() {
         ))}
       </motion.div>
 
+      {/* Slim quote card below analytics */}
+      <motion.section
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.05 }}
+        className={`${cardInteractive} mb-6 border-white/30 bg-white/60 dark:bg-zinc-900/45`}
+      >
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <Quote className="h-4 w-4 text-primary dark:text-icy-300" />
+            <span className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-stone-400">
+              Daily Quote
+            </span>
+          </div>
+          <div className="border-t border-white/10 pt-3">
+            <p className="font-serif text-base italic leading-relaxed text-zinc-900 dark:text-stone-200">“{data.quote}”</p>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* Feature navigation cards (moved below analytics + quote) */}
       {data.latestJournal && (
         <motion.section
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className={`${cardInteractive} mb-10`}
+          transition={{ delay: 0.1 }}
+          className={`${cardInteractive} mb-6 border-white/40 bg-white/80 dark:bg-zinc-900/55`}
         >
-          <p className={subheading}>Latest reflection</p>
-          <h2 className="mt-1 font-serif text-2xl font-semibold text-zinc-900 dark:text-stone-50">
-            {data.latestJournal.title}
-          </h2>
-          <p className={`mt-2 text-sm ${bodyText}`}>{data.latestJournal.preview}</p>
-          <span className="mt-3 inline-block rounded-full bg-ice-100 px-3 py-1 text-xs font-medium text-cobalt-500 dark:bg-blue-950/35 dark:text-icy-200">
-            {data.latestJournal.mood}
-          </span>
-          <Link to="/journal" className={`${btnGradient} mt-4 inline-flex text-sm`}>
-            Continue writing
-          </Link>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className={subheading}>Latest reflection</p>
+              <h2 className="mt-1 font-serif text-2xl font-semibold tracking-tight text-zinc-900 dark:text-stone-50">
+                {data.latestJournal.title}
+              </h2>
+              <div className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-stone-400">
+                {data.latestJournal.preview}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2 sm:justify-end">
+              <span className="inline-flex items-center gap-2 rounded-full bg-ice-100 px-3 py-1 text-xs font-medium text-cobalt-600 shadow-sm dark:bg-blue-950/35 dark:text-icy-200">
+                <span
+                  className="h-1.5 w-1.5 rounded-full bg-accent shadow-[0_0_12px_rgba(167,139,250,0.7)]"
+                  aria-hidden
+                />
+                {data.latestJournal.mood}
+              </span>
+            </div>
+          </div>
         </motion.section>
       )}
 
@@ -162,10 +279,14 @@ export default function Dashboard() {
         variants={staggerContainer}
         initial="hidden"
         animate="show"
-        className="grid gap-6 sm:grid-cols-2"
+        className="grid gap-6 lg:grid-cols-2"
       >
         {modules.map((item) => (
-          <motion.article key={item.title} variants={staggerItem} className={cardInteractive}>
+          <motion.article
+            key={item.title}
+            variants={staggerItem}
+            className={cardInteractive}
+          >
             <item.icon className="mb-4 h-8 w-8 text-primary transition-transform duration-300 group-hover:scale-110 dark:text-icy-300" />
             <h2 className="font-serif text-xl font-semibold text-zinc-900 dark:text-stone-50">
               {item.title}
@@ -186,3 +307,4 @@ export default function Dashboard() {
     </div>
   )
 }
+
