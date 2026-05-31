@@ -42,4 +42,64 @@ export const api = {
   removeToken() {
     localStorage.removeItem('token')
   },
+
+  async getJournalEntries() {
+    const token = localStorage.getItem('token')
+
+    const response = await fetch(`${API_BASE_URL}/journal`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}))
+      throw new Error(error.message || 'Failed to fetch journal entries')
+    }
+
+    const data = await response.json()
+    return data.entries || []
+  },
+
+  async createJournalEntry({ title, mood, content }) {
+    const token = localStorage.getItem('token')
+
+    const response = await fetch(`${API_BASE_URL}/journal`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ title, mood, content }),
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}))
+      throw new Error(error.message || 'Failed to create journal entry')
+    }
+
+    const data = await response.json()
+    return data.entry
+  },
+
+  async deleteJournalEntry(id) {
+    const token = localStorage.getItem('token')
+
+    const response = await fetch(`${API_BASE_URL}/journal/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}))
+      throw new Error(error.message || 'Failed to delete journal entry')
+    }
+
+    const data = await response.json()
+    return data.id
+  },
 }
+

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { BookOpen, Check, Loader2, Search, Sparkles, Trash2 } from 'lucide-react'
@@ -15,13 +15,9 @@ import {
   pageShell,
   subheading,
 } from '../constants/ui'
-import {
-  MOODS,
-  createEntry,
-  deleteEntry,
-  formatEntryDate,
-  getEntries,
-} from '../utils/journalStorage'
+import { MOODS, formatEntryDate } from '../utils/journalStorage'
+import { api } from '../utils/api'
+
 
 const moodStyles = {
   Calm: 'bg-sky-100 text-sky-800 dark:bg-sky-900/40 dark:text-sky-200',
@@ -36,13 +32,41 @@ const textareaClass =
   'min-h-[140px] w-full resize-y rounded-xl border border-stone-300 bg-white/90 px-4 py-3 text-zinc-900 placeholder:text-slate-400 backdrop-blur-sm transition-all duration-200 focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/25 dark:border-white/15 dark:bg-zinc-950/50 dark:text-stone-100 dark:placeholder:text-stone-500 dark:focus:border-violet-400 dark:focus:ring-violet-400/25'
 
 export default function Journal() {
-  const [entries, setEntries] = useState(() => getEntries())
+  const [entries, setEntries] = useState([])
   const [title, setTitle] = useState('')
   const [mood, setMood] = useState('Calm')
   const [content, setContent] = useState('')
   const [search, setSearch] = useState('')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function loadEntries() {
+      try {
+        const fetched = await api.getJournalEntries()
+
+        // Map MongoDB `_id` to the `id` property expected by the existing UI.
+        const mapped = (fetched || []).map((entry) => ({
+          ...entry,
+          id: entry._id,
+        }))
+
+        if (!cancelled) setEntries(mapped)
+      } catch (err) {
+        // Keep UI unchanged; just fail gracefully.
+        if (!cancelled) setEntries([])
+      }
+    }
+
+    loadEntries()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
@@ -60,22 +84,40 @@ export default function Journal() {
     if (!title.trim() || !content.trim()) return
 
     setSaving(true)
-    setTimeout(() => {
-      const entry = createEntry({ title, mood, content })
-      setEntries((prev) => [entry, ...prev])
-      setTitle('')
-      setMood('Calm')
-      setContent('')
-      setSaving(false)
-      setSaved(true)
-      setTimeout(() => setSaved(false), 2200)
+    setTimeout(async () => {
+      try {
+        const created = await api.createJournalEntry({
+          title,
+          mood,
+          content,
+        })
+
+        const entry = {
+          ...created,
+          id: created?._id,
+        }
+
+        setEntries((prev) => [entry, ...prev])
+        setTitle('')
+        setMood('Calm')
+        setContent('')
+      } finally {
+        setSaving(false)
+        setSaved(true)
+        setTimeout(() => setSaved(false), 2200)
+      }
     }, 600)
   }
 
-  const handleDelete = (id) => {
-    const updated = deleteEntry(id)
-    setEntries(updated)
+  const handleDelete = async (id) => {
+    try {
+      await api.deleteJournalEntry(id)
+      setEntries((prev) => prev.filter((e) => e.id !== id))
+    } catch (err) {
+      // Keep UI unchanged; just fail gracefully.
+    }
   }
+
 
   return (
     <div className={pageShell}>
