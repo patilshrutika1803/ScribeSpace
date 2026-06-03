@@ -142,11 +142,27 @@ export default function Focus() {
     const loadStats = async () => {
       try {
         const apiStats = await api.getFocusStats()
-        if (!cancelled) setStats(apiStats)
+
+        // Backend currently returns: { totalMinutes, totalHours, sessionsCount }
+        // but the UI expects: { totalSessions, totalHours, todaySessions, streak }
+        // Map + provide safe fallbacks so Focus page never crashes.
+        const totalSessions = apiStats?.sessionsCount ?? apiStats?.sessionsCount === 0 ? apiStats.sessionsCount : 0
+        const totalHours = apiStats?.totalHours ?? 0
+
+        const mapped = {
+          totalSessions,
+          totalHours,
+          todaySessions: totalSessions,
+          streak: 0,
+        }
+
+
+        if (!cancelled) setStats(mapped)
       } catch {
         // Keep existing UI values if stats fail to load
       }
     }
+
 
     loadStats()
 
@@ -331,10 +347,11 @@ export default function Focus() {
         className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
       >
         {[
-          { label: 'Total sessions', value: stats.totalSessions, icon: Target },
-          { label: 'Focus time', value: stats.totalHours, suffix: 'h', icon: Clock },
-          { label: "Today's sessions", value: stats.todaySessions, icon: Sparkles },
-          { label: 'Streak', value: stats.streak, suffix: 'd', icon: Flame, glow: stats.streak > 0 },
+          { label: 'Total sessions', value: stats?.totalSessions ?? 0, icon: Target },
+          { label: 'Focus time', value: stats?.totalHours ?? 0, suffix: 'h', icon: Clock },
+          { label: "Today's sessions", value: stats?.todaySessions ?? 0, icon: Sparkles },
+          { label: 'Streak', value: stats?.streak ?? 0, suffix: 'd', icon: Flame, glow: (stats?.streak ?? 0) > 0 },
+
         ].map((stat) => (
           <motion.div
             key={stat.label}
