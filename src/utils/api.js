@@ -101,5 +101,46 @@ export const api = {
     const data = await response.json()
     return data.id
   },
+
+  async getMoodHistory() {
+    const token = localStorage.getItem('token')
+
+    const response = await fetch(`${API_BASE_URL}/mood`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}))
+      throw new Error(error.message || 'Failed to fetch mood history')
+    }
+
+    const data = await response.json()
+    return data.logs || []
+  },
+
+  async saveMood(mood, note) {
+    const token = localStorage.getItem('token')
+
+    const response = await fetch(`${API_BASE_URL}/mood`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ mood, note }),
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}))
+      throw new Error(error.message || 'Failed to save mood')
+    }
+
+    const data = await response.json()
+    return data.log
+  },
 }
+
 

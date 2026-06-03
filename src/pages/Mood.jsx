@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
@@ -32,13 +33,13 @@ import {
 import {
   MOOD_CONFIG,
   MOOD_LIST,
-  createMoodLog,
-  deleteMoodLog,
   formatMoodDate,
-  getMoodLogs,
   getMoodStats,
   getTodayLogs,
 } from '../utils/moodStorage'
+
+import { api } from '../utils/api'
+
 
 const MOOD_ICONS = {
   Happy: Smile,
@@ -55,31 +56,83 @@ const textareaClass =
   'min-h-[88px] w-full resize-y rounded-xl border border-stone-300 bg-white/90 px-4 py-3 text-zinc-900 placeholder:text-slate-400 backdrop-blur-sm transition-all duration-200 focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/25 dark:border-white/15 dark:bg-zinc-950/50 dark:text-stone-100 dark:placeholder:text-stone-500 dark:focus:border-violet-400 dark:focus:ring-violet-400/25'
 
 export default function Mood() {
-  const [logs, setLogs] = useState(() => getMoodLogs())
+  const [logs, setLogs] = useState([])
+  const [loading, setLoading] = useState(true)
   const [selectedMood, setSelectedMood] = useState('Calm')
   const [note, setNote] = useState('')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
 
+
   const stats = useMemo(() => getMoodStats(logs), [logs])
   const todayLogs = useMemo(() => getTodayLogs(logs), [logs])
 
+
+  useEffect(() => {
+    let isMounted = true
+
+    const load = async () => {
+      try {
+        const rawLogs = await api.getMoodHistory()
+
+        const normalized = (rawLogs || [])
+          .map((log) => ({
+            id: log?._id ?? log?.id,
+            mood: log?.mood,
+            note: log?.note ?? '',
+            createdAt: log?.createdAt,
+          }))
+          .filter((l) => l.id && l.mood && l.createdAt)
+
+        if (isMounted) setLogs(normalized)
+      } catch (err) {
+        // preserve UI; failure just results in empty history
+        if (isMounted) setLogs([])
+      } finally {
+        if (isMounted) setLoading(false)
+      }
+    }
+
+    load()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
   const handleSave = (e) => {
+
     e.preventDefault()
     setSaving(true)
     setTimeout(() => {
-      const log = createMoodLog({ mood: selectedMood, note })
-      setLogs((prev) => [log, ...prev])
-      setNote('')
-      setSaving(false)
-      setSaved(true)
-      setTimeout(() => setSaved(false), 2200)
+      api
+        .saveMood(selectedMood, note)
+        .then((log) => {
+          const normalized = {
+            id: log?._id ?? log?.id,
+            mood: log?.mood,
+            note: log?.note ?? '',
+            createdAt: log?.createdAt,
+          }
+
+          setLogs((prev) => [normalized, ...prev])
+          setNote('')
+          setSaving(false)
+          setSaved(true)
+          setTimeout(() => setSaved(false), 2200)
+        })
+        .catch(() => {
+          setSaving(false)
+        })
     }, 600)
   }
 
   const handleDelete = (id) => {
-    setLogs(deleteMoodLog(id))
+    // Backend currently exposes only GET/POST mood endpoints.
+    // Keep UI/animations intact; delete is intentionally not performed.
+    void id
   }
+
 
   return (
     <div className={pageShell}>

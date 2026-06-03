@@ -23,8 +23,34 @@ dotenv.config();
 
 const app = express();
 
+// ---- CORS (explicit for Render frontend/backend) ----
+// Your error is specifically:
+// Origin: https://scribespace-1.onrender.com
+// Request: https://scribespace-x55m.onrender.com/api/mood
+// So we must allow that origin + preflight requests.
+const allowedOrigins = [
+  'https://scribespace-1.onrender.com',
+];
+
+const corsOptions = {
+  origin(origin, callback) {
+    // Allow non-browser tools / curl (no Origin header)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error('Not allowed by CORS'));
+  },
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+
+// Explicit preflight handling (some deployments are strict about OPTIONS)
+app.options('*', cors(corsOptions));
+
 // Global middleware
-app.use(cors());
 app.use(express.json({ limit: '1mb' }));
 
 // Health check
@@ -61,5 +87,4 @@ connectDB()
     console.error('[server] Failed to start due to DB connection error:', err);
     process.exit(1);
   });
-
 
