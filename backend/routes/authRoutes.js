@@ -5,7 +5,8 @@
  */
 
 const express = require('express');
-const { register, login } = require('../controllers/authController');
+const { register, login, verifyEmail } = require('../controllers/authController');
+
 
 const router = express.Router();
 
@@ -15,5 +16,9 @@ router.post('/register', register);
 // Login existing user
 router.post('/login', login);
 
+// Verify email
+router.get('/verify/:token', verifyEmail);
+
 module.exports = router;
+
 

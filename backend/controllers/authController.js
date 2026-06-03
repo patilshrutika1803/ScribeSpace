@@ -155,5 +155,55 @@ async function login(req, res) {
   }
 }
 
-module.exports = { register, login };
+/**
+ * GET /api/auth/verify/:token
+ */
+async function verifyEmail(req, res) {
+  try {
+    const token = req.params?.token;
+
+    if (!token) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid verification token'
+      });
+    }
+
+    const user = await User.findOne({ verificationToken: token });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid verification token'
+      });
+    }
+
+    if (user.verificationExpires < new Date()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Verification token expired'
+      });
+    }
+
+    user.isVerified = true;
+    user.verificationToken = null;
+    user.verificationExpires = null;
+
+    await user.save();
+
+    return res.json({
+      success: true,
+      message: 'Email verified successfully'
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: 'Email verification failed',
+      error: String(err?.message || err)
+    });
+  }
+}
+
+module.exports = { register, login, verifyEmail };
+
 
