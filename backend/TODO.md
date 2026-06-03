@@ -1,7 +1,5 @@
-# Backend TODO (ScribeSpace)
+# Backend TODO
 
-- [x] Add seed script (optional)
+- [x] Update `models/User.js` schema to add verification fields.
 
-- [ ] Add request validation (optional)
-- [ ] Add role-based authorization (optional)
 

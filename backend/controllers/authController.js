@@ -8,8 +8,11 @@
 
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 const User = require('../models/User');
+const sendEmail = require('../utils/sendEmail');
+
 
 /**
   * POST /api/auth/register
@@ -40,17 +43,50 @@ async function register(req, res) {
 
     const passwordHash = await bcrypt.hash(password, 10);
 
+    // --- Email verification fields (Step 1) ---
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
     const user = await User.create({
       name: String(name).trim(),
       email: email.toLowerCase().trim(),
       passwordHash,
       role: 'user',
+      isVerified: false,
+      verificationToken,
+      verificationExpires,
     });
 
+    // Send verification email
+    const verificationUrl = `http://localhost:5173/verify-email/${verificationToken}`;
+
+    const subject = 'Verify Your ScribeSpace Account';
+    const html = `
+      <div style="font-family: Arial, sans-serif; line-height: 1.5;">
+        <h2 style="margin-bottom: 12px;">Welcome to ScribeSpace, ${user.name}!</h2>
+        <p style="margin-bottom: 18px;">
+          Please verify your email address to activate your account.
+        </p>
+
+        <a href="${verificationUrl}" style="display: inline-block; padding: 10px 16px; background: #111827; color: #ffffff; text-decoration: none; border-radius: 6px;">
+          Verify Account
+        </a>
+
+        <p style="margin-top: 18px; color: #374151;">
+          If the button doesn't work, copy and paste this link into your browser:<br/>
+          <span style="word-break: break-all;">${verificationUrl}</span>
+        </p>
+      </div>
+    `;
+
+    await sendEmail(user.email, subject, html);
+
     const secret = process.env.JWT_SECRET;
+
     if (!secret) {
       return res.status(500).json({ message: 'JWT_SECRET is not configured' });
     }
+
 
     const token = jwt.sign(
       {
