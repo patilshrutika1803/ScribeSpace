@@ -133,13 +133,17 @@ async function login(req, res) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    if (!user.isVerified) {
-      return res.status(403).json({
-        message: 'Please verify your email before logging in'
-      });
-    }
+    // TODO:
+    // Re-enable email verification after configuring a custom sending domain in Resend.
+
+    // if (!user.isVerified) {
+    //   return res.status(403).json({
+    //     message: 'Please verify your email before logging in'
+    //   });
+    // }
 
     const ok = await bcrypt.compare(password, user.passwordHash);
+
     if (!ok) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
