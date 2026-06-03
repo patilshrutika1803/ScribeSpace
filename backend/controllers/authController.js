@@ -58,7 +58,7 @@ async function register(req, res) {
     });
 
     // Send verification email
-    const verificationUrl = `http://localhost:5173/verify-email/${verificationToken}`;
+    const verificationUrl = `https://scribespace-1.onrender.com/verify-email/${verificationToken}`;
 
     const subject = 'Verify Your ScribeSpace Account';
     const html = `
