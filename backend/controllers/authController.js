@@ -125,10 +125,17 @@ async function login(req, res) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
+    if (!user.isVerified) {
+      return res.status(403).json({
+        message: 'Please verify your email before logging in'
+      });
+    }
+
     const ok = await bcrypt.compare(password, user.passwordHash);
     if (!ok) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
+
 
     const secret = process.env.JWT_SECRET;
     if (!secret) {
