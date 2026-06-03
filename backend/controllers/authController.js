@@ -79,7 +79,12 @@ async function register(req, res) {
       </div>
     `;
 
+    console.log('[REGISTER] About to send verification email:', user.email);
+    console.log('[REGISTER] Verification URL:', verificationUrl);
+
     await sendEmail(user.email, subject, html);
+
+    console.log('[REGISTER] Verification email sent successfully');
 
     const secret = process.env.JWT_SECRET;
 
@@ -104,6 +109,9 @@ async function register(req, res) {
       user: { id: user._id, email: user.email, role: user.role },
     });
   } catch (err) {
+    console.error('[REGISTER] Registration failed');
+    console.error(err);
+
     return res.status(500).json({ message: 'Registration failed', error: String(err?.message || err) });
   }
 }
