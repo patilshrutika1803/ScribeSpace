@@ -141,6 +141,46 @@ export const api = {
     const data = await response.json()
     return data.log
   },
+
+  async createFocusSession(mode, durationMinutes, completed) {
+    const token = localStorage.getItem('token')
+
+    const response = await fetch(`${API_BASE_URL}/focus`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ mode, durationMinutes, completed }),
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}))
+      throw new Error(error.message || 'Failed to create focus session')
+    }
+
+    const data = await response.json()
+    return data.session
+  },
+
+  async getFocusStats() {
+    const token = localStorage.getItem('token')
+
+    const response = await fetch(`${API_BASE_URL}/focus/total`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}))
+      throw new Error(error.message || 'Failed to fetch focus stats')
+    }
+
+    const data = await response.json()
+    return data.stats
+  },
 }
 
 

@@ -43,6 +43,7 @@ import {
   FOCUS_MODES,
   createSession,
   deleteSession,
+
   formatSessionDate,
   formatTime,
   getFocusStats,
@@ -50,6 +51,8 @@ import {
   getRandomQuote,
   getSessions,
 } from '../utils/focusStorage'
+import { api } from '../utils/api'
+
 
 const MODE_ICONS = {
   'Deep Work': Brain,
@@ -114,6 +117,7 @@ function BreathingCircle({ timerActive }) {
 export default function Focus() {
   const [sessions, setSessions] = useState(() => getSessions())
   const [mode, setMode] = useState('Deep Work')
+
   const [durationMin, setDurationMin] = useState(25)
   const [remaining, setRemaining] = useState(25 * 60)
   const [status, setStatus] = useState('idle')
@@ -125,7 +129,32 @@ export default function Focus() {
   const focusRef = useRef(null)
 
   const totalSeconds = durationMin * 60
-  const stats = useMemo(() => getFocusStats(sessions), [sessions])
+  const [stats, setStats] = useState(() => ({
+    totalSessions: 0,
+    totalHours: 0,
+    todaySessions: 0,
+    streak: 0,
+  }))
+
+  useEffect(() => {
+    let cancelled = false
+
+    const loadStats = async () => {
+      try {
+        const apiStats = await api.getFocusStats()
+        if (!cancelled) setStats(apiStats)
+      } catch {
+        // Keep existing UI values if stats fail to load
+      }
+    }
+
+    loadStats()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   const modeConfig = getModeConfig(mode)
   const progress = totalSeconds > 0 ? (totalSeconds - remaining) / totalSeconds : 0
   const timerActive = status === 'running'
@@ -137,11 +166,22 @@ export default function Focus() {
   const handleComplete = useCallback(() => {
     if (completedRef.current) return
     completedRef.current = true
+
+    // Persist completion to backend
+    api
+      .createFocusSession(mode, durationMin, true)
+      .catch(() => {
+        // Keep existing UX even if API fails
+      })
+
+    // Preserve existing local session history + UI exactly as before
     const session = createSession({ mode, duration: durationMin, completed: true })
     setSessions((prev) => [session, ...prev])
+
     setQuote(getRandomQuote())
     if (soundOn) playCompletionSound()
   }, [mode, durationMin, soundOn])
+
 
   useEffect(() => {
     if (status !== 'running') return undefined
