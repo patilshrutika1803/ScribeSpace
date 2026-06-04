@@ -37,31 +37,30 @@ async function createJournalEntry(req, res) {
  */
 async function getMyJournalEntries(req, res) {
   try {
-    const { search, mood } = req.query || {}
+    const { search, mood } = req.query || {};
 
-    const query = { user: req.user.id }
+    const query = { user: req.user.id };
 
     if (mood && typeof mood === 'string' && mood.trim()) {
-      query.mood = mood.trim()
+      query.mood = mood.trim();
     }
 
     if (search && typeof search === 'string' && search.trim()) {
-      const term = search.trim()
+      const term = search.trim();
 
       // Escape regex special chars to prevent regex injection
-      const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
       query.$or = [
         { title: { $regex: escaped, $options: 'i' } },
         { content: { $regex: escaped, $options: 'i' } },
-      ]
+      ];
     }
 
-
     const entries = await Journal.find(query).sort({ createdAt: -1 });
-    return res.json({ entries })
+    return res.json({ entries });
   } catch (err) {
-    return res.status(500).json({ message: 'Failed to fetch journal entries', error: String(err?.message || err) })
+    return res.status(500).json({ message: 'Failed to fetch journal entries', error: String(err?.message || err) });
   }
 }
 
@@ -84,9 +83,49 @@ async function deleteJournalEntry(req, res) {
   }
 }
 
+/**
+ * PUT /api/journal/:id
+ * Updates a journal entry owned by the logged-in user.
+ * Body: { title, mood, content }
+ */
+async function updateJournalEntry(req, res) {
+  try {
+    const { id } = req.params;
+    const { title, mood, content } = req.body || {};
+
+    if (!title || !content) {
+      return res.status(400).json({ message: 'title and content are required' });
+    }
+
+    const updated = await Journal.findOneAndUpdate(
+      { _id: id, user: req.user.id },
+      {
+        $set: {
+          title,
+          mood,
+          content,
+        },
+      },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ message: 'Journal entry not found' });
+    }
+
+    return res.json({ message: 'Journal entry updated', entry: updated });
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Failed to update journal entry',
+      error: String(err?.message || err),
+    });
+  }
+}
+
 module.exports = {
   createJournalEntry,
   getMyJournalEntries,
   deleteJournalEntry,
+  updateJournalEntry,
 };
 

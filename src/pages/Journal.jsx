@@ -18,7 +18,6 @@ import {
 import { MOODS, formatEntryDate } from '../utils/journalStorage'
 import { api } from '../utils/api'
 
-
 const moodStyles = {
   Calm: 'bg-sky-100 text-sky-800 dark:bg-sky-900/40 dark:text-sky-200',
   Happy: 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200',
@@ -33,9 +32,14 @@ const textareaClass =
 
 export default function Journal() {
   const [entries, setEntries] = useState([])
+
+  // Form state (create + edit share the same fields)
   const [title, setTitle] = useState('')
   const [mood, setMood] = useState('Calm')
   const [content, setContent] = useState('')
+
+  const [editingId, setEditingId] = useState(null)
+  const [formError, setFormError] = useState('')
 
   const [search, setSearch] = useState('')
   const [selectedMood, setSelectedMood] = useState('All Moods')
@@ -45,6 +49,8 @@ export default function Journal() {
 
   const [loadingEntries, setLoadingEntries] = useState(false)
   const [fetchError, setFetchError] = useState('')
+
+  const isEditing = Boolean(editingId)
 
   useEffect(() => {
     let cancelled = false
@@ -85,29 +91,69 @@ export default function Journal() {
 
   const filtered = useMemo(() => entries, [entries])
 
+  const resetFormToCreate = () => {
+    setEditingId(null)
+    setFormError('')
+    setTitle('')
+    setMood('Calm')
+    setContent('')
+  }
+
+  const handleEdit = (entry) => {
+    setEditingId(entry.id)
+    setFormError('')
+    setTitle(entry.title || '')
+    setMood(entry.mood || 'Calm')
+    setContent(entry.content || '')
+  }
+
+  const handleCancelEdit = (e) => {
+    e.preventDefault()
+    resetFormToCreate()
+  }
 
   const handleSave = (e) => {
     e.preventDefault()
     if (!title.trim() || !content.trim()) return
 
+    setFormError('')
     setSaving(true)
+
     setTimeout(async () => {
       try {
-        const created = await api.createJournalEntry({
-          title,
-          mood,
-          content,
-        })
+        if (isEditing) {
+          const updated = await api.updateJournalEntry(editingId, {
+            title,
+            mood,
+            content,
+          })
 
-        const entry = {
-          ...created,
-          id: created?._id,
+          const mapped = {
+            ...updated,
+            id: updated?._id || updated?.id,
+          }
+
+          setEntries((prev) => prev.map((e2) => (e2.id === editingId ? mapped : e2)))
+          resetFormToCreate()
+        } else {
+          const created = await api.createJournalEntry({
+            title,
+            mood,
+            content,
+          })
+
+          const entry = {
+            ...created,
+            id: created?._id,
+          }
+
+          setEntries((prev) => [entry, ...prev])
+          setTitle('')
+          setMood('Calm')
+          setContent('')
         }
-
-        setEntries((prev) => [entry, ...prev])
-        setTitle('')
-        setMood('Calm')
-        setContent('')
+      } catch (err) {
+        setFormError(err?.message || (isEditing ? 'Failed to update journal entry' : 'Failed to save journal entry'))
       } finally {
         setSaving(false)
         setSaved(true)
@@ -120,11 +166,11 @@ export default function Journal() {
     try {
       await api.deleteJournalEntry(id)
       setEntries((prev) => prev.filter((e) => e.id !== id))
+      if (editingId === id) resetFormToCreate()
     } catch (err) {
       // Keep UI unchanged; just fail gracefully.
     }
   }
-
 
   return (
     <div className={pageShell}>
@@ -163,7 +209,6 @@ export default function Journal() {
         transition={{ delay: 0.05 }}
         className="mb-8"
       >
-        {/* Desktop: side-by-side | Mobile: stacked */}
         <div className="grid gap-4 md:grid-cols-2">
           {/* Search */}
           <div className="flex flex-col gap-2">
@@ -205,8 +250,6 @@ export default function Journal() {
         </div>
       </motion.div>
 
-
-
       <div className="grid gap-8 lg:grid-cols-5">
         {/* 2. New Entry Form + 3. Mood Selector */}
         <motion.section
@@ -215,13 +258,16 @@ export default function Journal() {
           transition={{ delay: 0.1 }}
           className="lg:col-span-2"
         >
-          <form
-            onSubmit={handleSave}
-            className={`${cardSoft} transition-shadow duration-300 hover:shadow-xl`}
-          >
+          <form onSubmit={handleSave} className={`${cardSoft} transition-shadow duration-300 hover:shadow-xl`}>
             <h2 className="mb-6 text-lg font-semibold text-zinc-900 dark:text-stone-50">
-              New entry
+              {isEditing ? 'Edit Entry' : 'New entry'}
             </h2>
+
+            {formError ? (
+              <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-900/50 dark:bg-rose-900/20 dark:text-rose-200">
+                {formError}
+              </div>
+            ) : null}
 
             <div className="mb-5">
               <label htmlFor="journal-title" className={label}>
@@ -272,29 +318,67 @@ export default function Journal() {
               />
             </div>
 
-            <motion.button
-              type="submit"
-              disabled={saving || !title.trim() || !content.trim()}
-              className={`${btnGradient} w-full ${saved ? 'ring-2 ring-emerald-400/50' : ''}`}
-              whileTap={{ scale: 0.98 }}
-            >
-              {saving ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Saving…
-                </>
-              ) : saved ? (
-                <>
-                  <Check className="h-4 w-4" />
-                  Saved
-                </>
-              ) : (
-                <>
-                  <Sparkles className="h-4 w-4" />
-                  Save entry
-                </>
-              )}
-            </motion.button>
+            {isEditing ? (
+              <div className="flex gap-3">
+                <motion.button
+                  type="submit"
+                  disabled={saving || !title.trim() || !content.trim()}
+                  className={`${btnGradient} w-full ${saved ? 'ring-2 ring-emerald-400/50' : ''}`}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  {saving ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Saving…
+                    </>
+                  ) : saved ? (
+                    <>
+                      <Check className="h-4 w-4" />
+                      Saved
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4" />
+                      Save Changes
+                    </>
+                  )}
+                </motion.button>
+
+                <motion.button
+                  type="button"
+                  onClick={handleCancelEdit}
+                  disabled={saving}
+                  className="w-full rounded-xl border border-stone-200 bg-white/80 px-4 py-3 text-sm font-medium text-slate-700 transition-colors hover:bg-white dark:border-white/10 dark:bg-zinc-800/60 dark:text-stone-200 dark:hover:bg-zinc-800/80"
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Cancel
+                </motion.button>
+              </div>
+            ) : (
+              <motion.button
+                type="submit"
+                disabled={saving || !title.trim() || !content.trim()}
+                className={`${btnGradient} w-full ${saved ? 'ring-2 ring-emerald-400/50' : ''}`}
+                whileTap={{ scale: 0.98 }}
+              >
+                {saving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Saving…
+                  </>
+                ) : saved ? (
+                  <>
+                    <Check className="h-4 w-4" />
+                    Saved
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-4 w-4" />
+                    Save entry
+                  </>
+                )}
+              </motion.button>
+            )}
           </form>
         </motion.section>
 
@@ -310,18 +394,12 @@ export default function Journal() {
             </div>
           ) : null}
 
-          {loadingEntries ? (
-            <div className="mb-4 text-sm text-slate-500 dark:text-slate-300">Loading…</div>
-          ) : null}
+          {loadingEntries ? <div className="mb-4 text-sm text-slate-500 dark:text-slate-300">Loading…</div> : null}
 
           {filtered.length === 0 && !loadingEntries ? (
             <EmptyState
               icon={BookOpen}
-              title={
-                entries.length === 0
-                  ? 'Your journal is waiting.'
-                  : 'No journal entries match your search.'
-              }
+              title={entries.length === 0 ? 'Your journal is waiting.' : 'No journal entries match your search.'}
               description={
                 entries.length === 0
                   ? 'When words find you, this space will hold them gently.'
@@ -329,42 +407,59 @@ export default function Journal() {
               }
             />
           ) : (
-
             <div className="grid gap-4 sm:grid-cols-2">
-              {filtered.map((entry, index) => (
-                <motion.article
-                  key={entry.id}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.04 }}
-                  className={`${card} group flex flex-col hover:-translate-y-0.5`}
-                >
-                  <div className="mb-3 flex items-start justify-between gap-2">
-                    <span
-                      className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${moodStyles[entry.mood] || moodStyles.Calm}`}
-                    >
-                      {entry.mood}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(entry.id)}
-                      className="rounded-lg p-1.5 text-slate-400 opacity-0 transition-all duration-200 hover:bg-rose-50 hover:text-rose-600 group-hover:opacity-100 dark:hover:bg-rose-900/30 dark:hover:text-rose-300"
-                      aria-label="Delete entry"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                  <h3 className="font-serif text-lg font-semibold text-zinc-900 dark:text-stone-50">
-                    {entry.title}
-                  </h3>
-                  <p className={`mt-2 flex-1 text-sm leading-relaxed line-clamp-4 ${bodyText}`}>
-                    {entry.content}
-                  </p>
-                  <p className="mt-4 text-xs text-slate-500 dark:text-stone-500">
-                    {formatEntryDate(entry.createdAt)}
-                  </p>
-                </motion.article>
-              ))}
+              {filtered.map((entry, index) => {
+                const isThisEditing = entry.id === editingId
+                return (
+                  <motion.article
+                    key={entry.id}
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.04 }}
+                    className={`${card} group flex flex-col hover:-translate-y-0.5 ${
+                      isThisEditing
+                        ? 'ring-2 ring-violet-400/60 dark:ring-violet-300/40 border border-violet-300/40 dark:border-violet-300/15 bg-violet-50/40 dark:bg-violet-950/30'
+                        : ''
+                    }`}
+                  >
+                    <div className="mb-3 flex items-start justify-between gap-2">
+                      <span
+                        className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                          moodStyles[entry.mood] || moodStyles.Calm
+                        }`}
+                      >
+                        {entry.mood}
+                      </span>
+
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => handleEdit(entry)}
+                          className="rounded-lg px-2 py-1.5 text-xs font-medium text-slate-400 opacity-0 transition-all duration-200 hover:bg-violet-50 hover:text-violet-600 group-hover:opacity-100 dark:hover:bg-violet-900/30 dark:hover:text-violet-300"
+                          aria-label="Edit entry"
+                        >
+                          ✏️ Edit
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(entry.id)}
+                          className="rounded-lg p-1.5 text-slate-400 opacity-0 transition-all duration-200 hover:bg-rose-50 hover:text-rose-600 group-hover:opacity-100 dark:hover:bg-rose-900/30 dark:hover:text-rose-300"
+                          aria-label="Delete entry"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <h3 className="font-serif text-lg font-semibold text-zinc-900 dark:text-stone-50">
+                      {entry.title}
+                    </h3>
+                    <p className={`mt-2 flex-1 text-sm leading-relaxed line-clamp-4 ${bodyText}`}>{entry.content}</p>
+                    <p className="mt-4 text-xs text-slate-500 dark:text-stone-500">{formatEntryDate(entry.createdAt)}</p>
+                  </motion.article>
+                )
+              })}
             </div>
           )}
         </section>
@@ -372,3 +467,4 @@ export default function Journal() {
     </div>
   )
 }
+

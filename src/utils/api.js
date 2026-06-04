@@ -92,6 +92,27 @@ export const api = {
     return data.entry
   },
 
+  async updateJournalEntry(id, { title, mood, content }) {
+    const token = localStorage.getItem('token')
+
+    const response = await fetch(`${API_BASE_URL}/journal/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ title, mood, content }),
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}))
+      throw new Error(error.message || 'Failed to update journal entry')
+    }
+
+    const data = await response.json()
+    return data.entry
+  },
+
   async deleteJournalEntry(id) {
     const token = localStorage.getItem('token')
 
@@ -191,5 +212,4 @@ export const api = {
     return data.stats
   },
 }
-
 
