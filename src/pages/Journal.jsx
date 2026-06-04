@@ -36,16 +36,28 @@ export default function Journal() {
   const [title, setTitle] = useState('')
   const [mood, setMood] = useState('Calm')
   const [content, setContent] = useState('')
+
   const [search, setSearch] = useState('')
+  const [selectedMood, setSelectedMood] = useState('All Moods')
+
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+
+  const [loadingEntries, setLoadingEntries] = useState(false)
+  const [fetchError, setFetchError] = useState('')
 
   useEffect(() => {
     let cancelled = false
 
     async function loadEntries() {
+      setLoadingEntries(true)
+      setFetchError('')
+
       try {
-        const fetched = await api.getJournalEntries()
+        const fetched = await api.getJournalEntries({
+          search,
+          mood: selectedMood,
+        })
 
         // Map MongoDB `_id` to the `id` property expected by the existing UI.
         const mapped = (fetched || []).map((entry) => ({
@@ -55,8 +67,12 @@ export default function Journal() {
 
         if (!cancelled) setEntries(mapped)
       } catch (err) {
-        // Keep UI unchanged; just fail gracefully.
-        if (!cancelled) setEntries([])
+        if (!cancelled) {
+          setEntries([])
+          setFetchError(err?.message || 'Failed to load journal entries')
+        }
+      } finally {
+        if (!cancelled) setLoadingEntries(false)
       }
     }
 
@@ -65,19 +81,10 @@ export default function Journal() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [search, selectedMood])
 
+  const filtered = useMemo(() => entries, [entries])
 
-  const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase()
-    if (!q) return entries
-    return entries.filter(
-      (e) =>
-        e.title.toLowerCase().includes(q) ||
-        e.content.toLowerCase().includes(q) ||
-        e.mood.toLowerCase().includes(q),
-    )
-  }, [entries, search])
 
   const handleSave = (e) => {
     e.preventDefault()
@@ -149,22 +156,48 @@ export default function Journal() {
         </div>
       </motion.header>
 
-      {/* 5. Search Bar */}
+      {/* 5. Search + Mood Filter */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
-        className="relative mb-8"
+        className="mb-8"
       >
-        <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
-        <input
-          type="search"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by title, mood, or content…"
-          className={`${input} pl-12`}
-        />
+        <div className="grid gap-4 sm:grid-cols-2">
+          {/* Search */}
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search your journal..."
+              className={`${input} pl-12`}
+            />
+          </div>
+
+          {/* Mood dropdown */}
+          <div className="flex flex-col gap-2">
+            <label htmlFor="journal-mood-filter" className={label}>
+              Mood
+            </label>
+            <select
+              id="journal-mood-filter"
+              value={selectedMood}
+              onChange={(e) => setSelectedMood(e.target.value)}
+              className={`${input} pr-10 appearance-none bg-white/90 dark:bg-zinc-950/50`}
+            >
+              <option value="All Moods">All Moods</option>
+              {MOODS.map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
       </motion.div>
+
 
       <div className="grid gap-8 lg:grid-cols-5">
         {/* 2. New Entry Form + 3. Mood Selector */}
@@ -263,17 +296,32 @@ export default function Journal() {
             Your entries ({filtered.length})
           </h2>
 
-          {filtered.length === 0 ? (
+          {fetchError ? (
+            <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-900/50 dark:bg-rose-900/20 dark:text-rose-200">
+              {fetchError}
+            </div>
+          ) : null}
+
+          {loadingEntries ? (
+            <div className="mb-4 text-sm text-slate-500 dark:text-slate-300">Loading…</div>
+          ) : null}
+
+          {filtered.length === 0 && !loadingEntries ? (
             <EmptyState
               icon={BookOpen}
-              title={entries.length === 0 ? 'Your journal is waiting.' : 'No reflections match that search.'}
+              title={
+                entries.length === 0
+                  ? 'Your journal is waiting.'
+                  : 'No journal entries match your search.'
+              }
               description={
                 entries.length === 0
                   ? 'When words find you, this space will hold them gently.'
-                  : 'Try a softer keyword or clear the search.'
+                  : 'Try a softer keyword or clear the filters.'
               }
             />
           ) : (
+
             <div className="grid gap-4 sm:grid-cols-2">
               {filtered.map((entry, index) => (
                 <motion.article

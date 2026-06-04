@@ -37,10 +37,31 @@ async function createJournalEntry(req, res) {
  */
 async function getMyJournalEntries(req, res) {
   try {
-    const entries = await Journal.find({ user: req.user.id }).sort({ createdAt: -1 });
-    return res.json({ entries });
+    const { search, mood } = req.query || {}
+
+    const query = { user: req.user.id }
+
+    if (mood && typeof mood === 'string' && mood.trim()) {
+      query.mood = mood.trim()
+    }
+
+    if (search && typeof search === 'string' && search.trim()) {
+      const term = search.trim()
+
+      // Escape regex special chars to prevent regex injection
+      const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+      query.$or = [
+        { title: { $regex: escaped, $options: 'i' } },
+        { content: { $regex: escaped, $options: 'i' } },
+      ]
+    }
+
+
+    const entries = await Journal.find(query).sort({ createdAt: -1 });
+    return res.json({ entries })
   } catch (err) {
-    return res.status(500).json({ message: 'Failed to fetch journal entries', error: String(err?.message || err) });
+    return res.status(500).json({ message: 'Failed to fetch journal entries', error: String(err?.message || err) })
   }
 }
 

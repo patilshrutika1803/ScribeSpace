@@ -43,10 +43,19 @@ export const api = {
     localStorage.removeItem('token')
   },
 
-  async getJournalEntries() {
+  async getJournalEntries({ search, mood } = {}) {
     const token = localStorage.getItem('token')
 
-    const response = await fetch(`${API_BASE_URL}/journal`, {
+    const params = new URLSearchParams()
+    if (search && typeof search === 'string' && search.trim()) params.set('search', search.trim())
+    if (mood && typeof mood === 'string' && mood.trim() && mood !== 'All Moods') {
+      params.set('mood', mood.trim())
+    }
+
+    const qs = params.toString()
+    const url = `${API_BASE_URL}/journal${qs ? `?${qs}` : ''}`
+
+    const response = await fetch(url, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`,
