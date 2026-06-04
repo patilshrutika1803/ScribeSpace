@@ -163,17 +163,24 @@ export default function Journal() {
         transition={{ delay: 0.05 }}
         className="mb-8"
       >
-        <div className="grid gap-4 sm:grid-cols-2">
+        {/* Desktop: side-by-side | Mobile: stacked */}
+        <div className="grid gap-4 md:grid-cols-2">
           {/* Search */}
-          <div className="relative">
-            <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
-            <input
-              type="search"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search your journal..."
-              className={`${input} pl-12`}
-            />
+          <div className="flex flex-col gap-2">
+            <label htmlFor="journal-search" className={label}>
+              Search
+            </label>
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+              <input
+                id="journal-search"
+                type="search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search your journal..."
+                className={`${input} pl-12 h-11`}
+              />
+            </div>
           </div>
 
           {/* Mood dropdown */}
@@ -185,7 +192,7 @@ export default function Journal() {
               id="journal-mood-filter"
               value={selectedMood}
               onChange={(e) => setSelectedMood(e.target.value)}
-              className={`${input} pr-10 appearance-none bg-white/90 dark:bg-zinc-950/50`}
+              className={`${input} pr-10 appearance-none bg-white/90 dark:bg-zinc-950/50 h-11`}
             >
               <option value="All Moods">All Moods</option>
               {MOODS.map((m) => (
@@ -197,6 +204,7 @@ export default function Journal() {
           </div>
         </div>
       </motion.div>
+
 
 
       <div className="grid gap-8 lg:grid-cols-5">
