@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, Sparkles } from 'lucide-react'
+import { ArrowRight, Sparkles } from 'lucide-react'cd
 import { bodyText, btnGhost, btnGradient, headingDisplay } from '../constants/ui'
 
 const container = {

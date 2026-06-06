@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+
 import {
   BookOpen,
   Clock,
@@ -34,9 +36,10 @@ function formatPercent(n) {
 }
 
 
-import { getDashboardInsights } from '../utils/dashboardStats'
 
 const modules = [
+
+
 
 
   {
@@ -76,8 +79,39 @@ const modules = [
 export default function Dashboard() {
   const data = getDashboardInsights()
 
+  const [stats, setStats] = useState(null)
+  const [statsLoading, setStatsLoading] = useState(true)
+  const [statsError, setStatsError] = useState(null)
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function loadStats() {
+      try {
+        setStatsLoading(true)
+        setStatsError(null)
+        const result = await api.getDashboardStats()
+        if (cancelled) return
+        setStats(result)
+      } catch (err) {
+        if (cancelled) return
+        setStatsError(err?.message || 'Failed to load dashboard stats')
+        setStats(null)
+      } finally {
+        if (cancelled) return
+        setStatsLoading(false)
+      }
+    }
+
+    loadStats()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   return (
     <div className={pageShell}>
+
       <motion.section
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
@@ -126,8 +160,118 @@ export default function Dashboard() {
         </div>
       </motion.section>
 
+      {/* Statistics (MongoDB-backed) */}
+      <motion.section
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.02 }}
+        className="mb-5"
+      >
+        <div className="mb-3 flex items-end justify-between gap-4">
+          <div>
+            <p className={subheading}>Statistics</p>
+            <h2 className="mt-1 font-serif text-2xl font-semibold tracking-tight text-zinc-900 dark:text-stone-50">
+              Your at-a-glance progress
+            </h2>
+          </div>
+        </div>
+
+        {statsLoading ? (
+          <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+
+            {[
+              'Journal Entries',
+              'Mood Logs',
+              'Focus Sessions',
+              'Focus Minutes',
+              'Most Common Mood',
+            ].map((k) => (
+              <div
+                key={k}
+                className={`${cardInteractive} h-[108px] min-h-[108px] border-white/20 bg-white/60 dark:bg-zinc-900/45 p-4 animate-pulse`}
+              />
+            ))}
+          </div>
+        ) : statsError ? (
+          <div
+            className={`${cardInteractive} border-white/30 bg-white/60 dark:bg-zinc-900/45 p-4`}
+            role="alert"
+          >
+            <p className="font-medium text-zinc-900 dark:text-stone-50">Couldn’t load stats.</p>
+            <p className="mt-1 text-sm text-slate-600 dark:text-stone-400">{statsError}</p>
+          </div>
+        ) : (
+          <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+            {[
+              {
+                label: 'Journal Entries',
+                value: stats?.totalJournalEntries ?? 0,
+                icon: BookOpen,
+                accent: 'from-primary/30 via-accent/15 to-accent/0',
+              },
+              {
+                label: 'Mood Logs',
+                value: stats?.totalMoodLogs ?? 0,
+                icon: Heart,
+                accent: 'from-amber-400/25 via-amber-300/15 to-transparent',
+              },
+              {
+                label: 'Focus Sessions',
+                value: stats?.totalFocusSessions ?? 0,
+                icon: Target,
+                accent: 'from-accent/25 via-primary/15 to-transparent',
+              },
+              {
+                label: 'Focus Minutes',
+                value: stats?.totalFocusMinutes ?? 0,
+                icon: Clock,
+                accent: 'from-primary/25 via-cobalt-400/15 to-transparent',
+              },
+              {
+                label: 'Most Common Mood',
+                value: stats?.mostCommonMood ?? '—',
+                icon: Flame,
+                accent: 'from-amber-400/25 via-accent/15 to-transparent',
+                textValue: true,
+              },
+            ].map((stat) => (
+              <motion.div
+                key={stat.label}
+                whileHover={{ y: -2 }}
+                transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+                className={`${cardInteractive} relative flex flex-col justify-between overflow-hidden px-4 py-3 h-[108px] min-h-[108px]`}
+              >
+                <div
+                  className={`pointer-events-none absolute inset-0 opacity-0 transition-opacity bg-gradient-to-br ${stat.accent}`}
+                  aria-hidden
+                />
+
+                <div className="relative">
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ice-100/70 shadow-inner dark:bg-blue-950/30">
+                      <stat.icon className="h-5 w-5 text-primary dark:text-icy-300" />
+                    </div>
+                    <p className="text-xs uppercase tracking-widest text-slate-500 dark:text-stone-400">
+                      {stat.label}
+                    </p>
+                  </div>
+
+                  <p className={stat.textValue
+                    ? 'mt-2 truncate font-serif text-2xl font-semibold tracking-tight text-zinc-900 dark:text-stone-50'
+                    : 'mt-2 font-serif text-2xl font-semibold tracking-tight text-zinc-900 dark:text-stone-50'
+                  }>
+                    {stat.value}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </motion.section>
+
       {/* Analytics row (6 compact stats in ONE responsive row) */}
       <motion.div
+
         variants={staggerContainer}
         initial="hidden"
         animate="show"

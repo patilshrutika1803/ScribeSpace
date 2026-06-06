@@ -18,6 +18,8 @@ const authRoutes = require('./routes/authRoutes');
 const journalRoutes = require('./routes/journalRoutes');
 const moodRoutes = require('./routes/moodRoutes');
 const focusRoutes = require('./routes/focusRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
+
 
 dotenv.config();
 
@@ -63,8 +65,10 @@ app.use('/api/auth', authRoutes);
 app.use('/api/journal', journalRoutes);
 app.use('/api/mood', moodRoutes);
 app.use('/api/focus', focusRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // Start server after DB connection
+
 const PORT = process.env.PORT || 5000;
 
 // If MONGODB_URI is not provided yet (as requested), allow server startup

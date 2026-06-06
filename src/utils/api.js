@@ -211,5 +211,25 @@ export const api = {
     const data = await response.json()
     return data.stats
   },
+
+  async getDashboardStats() {
+    const token = localStorage.getItem('token')
+
+    const response = await fetch(`${API_BASE_URL}/dashboard/stats`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}))
+      throw new Error(error.message || 'Failed to fetch dashboard stats')
+    }
+
+    const data = await response.json()
+    return data
+  },
 }
+
 
