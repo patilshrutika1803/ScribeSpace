@@ -82,7 +82,13 @@ export default function Dashboard() {
   const [dataError, setDataError] = useState(null)
 
 
-  const [stats, setStats] = useState(null)
+  const [stats, setStats] = useState({
+    totalJournalEntries: 0,
+    totalMoodLogs: 0,
+    totalFocusSessions: 0,
+    totalFocusMinutes: 0,
+    mostCommonMood: '—',
+  })
   const [statsLoading, setStatsLoading] = useState(true)
   const [statsError, setStatsError] = useState(null)
 
