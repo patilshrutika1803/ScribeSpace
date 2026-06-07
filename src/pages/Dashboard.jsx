@@ -35,13 +35,7 @@ function formatPercent(n) {
   return `${Math.round(v)}%`
 }
 
-
-
 const modules = [
-
-
-
-
   {
     title: 'Journal',
     description: 'Write reflections, track moods, and revisit your thoughts.',
@@ -81,8 +75,18 @@ export default function Dashboard() {
   const [dataLoading, setDataLoading] = useState(true)
   const [dataError, setDataError] = useState(null)
 
+  const safeData = data ?? {}
+  const safeGreeting = safeData?.greeting ?? {}
+  const safeLatestJournal = safeData?.latestJournal ?? null
+  const safeQuote = safeData?.quote ?? ''
+  const safeStats = safeData?.stats ?? {}
+  const safeJournalCount = safeData?.journalCount ?? 0
+  const safeMoodStreak = safeData?.moodStreak ?? 0
+  const safeTodayMood = safeData?.todayMood ?? '—'
+  const safeFocusWeekHours = safeData?.focusWeekHours ?? 0
 
   const [stats, setStats] = useState({
+
     totalJournalEntries: 0,
     totalMoodLogs: 0,
     totalFocusSessions: 0,
@@ -187,9 +191,10 @@ export default function Dashboard() {
             <div>
               <p className={subheading}>Your sanctuary</p>
               <h1 className={`${headingDisplay} mt-1`}>
-                {data?.greeting?.label || 'Welcome'}, welcome back
+                {safeGreeting?.label || 'Welcome'}, welcome back
               </h1>
-              <p className={`mt-3 max-w-2xl text-base ${bodyText}`}>{data?.greeting?.tone || ''}</p>
+              <p className={`mt-3 max-w-2xl text-base ${bodyText}`}>{safeGreeting?.tone || ''}</p>
+
             </div>
           </div>
           <blockquote className="max-w-sm rounded-2xl border border-blue-200/50 bg-white/60 px-5 py-4 backdrop-blur-sm dark:border-primary-2/20 dark:bg-zinc-900/50">
@@ -320,21 +325,21 @@ export default function Dashboard() {
         {[
           {
             label: 'Journal Entries',
-            value: data?.journalCount ?? 0,
+            value: safeJournalCount,
             icon: BookOpen,
             accent: 'from-primary/30 via-accent/15 to-accent/0',
             suffix: '',
           },
           {
             label: 'Mood Streak',
-            value: data?.moodStreak ?? 0,
+            value: safeMoodStreak,
             icon: Flame,
             accent: 'from-amber-400/25 via-amber-300/15 to-transparent',
             suffix: 'd',
           },
           {
             label: "Today's Mood",
-            value: data?.todayMood ?? '—',
+            value: safeTodayMood,
             icon: Heart,
             accent: 'from-primary/25 via-accent/15 to-transparent',
             textValue: true,
@@ -342,15 +347,15 @@ export default function Dashboard() {
           },
           {
             label: 'Focus Hours',
-            value: data?.focusWeekHours ?? 0,
+            value: safeFocusWeekHours,
             icon: Clock,
             accent: 'from-accent/25 via-primary/15 to-transparent',
             suffix: 'h',
           },
           {
             label: 'Wellness Score',
-            value: formatPercent(
-              50 + (data?.moodStreak ?? 0) * 4 + (Number(data?.focusWeekHours ?? 0) || 0) * 2
+              value: formatPercent(
+              50 + safeMoodStreak * 4 + (Number(safeFocusWeekHours) || 0) * 2
             ),
             icon: Shield,
             accent: 'from-primary/25 via-cobalt-400/15 to-transparent',
@@ -359,7 +364,7 @@ export default function Dashboard() {
           {
             label: 'Weekly Progress',
             value: formatPercent(
-              Math.min(100, 10 + (Number(data?.journalCount ?? 0) || 0) * 6)
+              Math.min(100, 10 + (Number(safeJournalCount) || 0) * 6)
             ),
             icon: BarChart3,
             accent: 'from-accent/25 via-primary/15 to-transparent',
@@ -422,13 +427,14 @@ export default function Dashboard() {
             </span>
           </div>
           <div className="border-t border-white/10 pt-3">
-            <p className="font-serif text-base italic leading-relaxed text-zinc-900 dark:text-stone-200">“{data?.quote ?? ''}”</p>
+            <p className="font-serif text-base italic leading-relaxed text-zinc-900 dark:text-stone-200">“{safeQuote}”</p>
           </div>
+
         </div>
       </motion.section>
 
       {/* Feature navigation cards (moved below analytics + quote) */}
-      {data.latestJournal && (
+      {safeLatestJournal && (
         <motion.section
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -439,10 +445,12 @@ export default function Dashboard() {
             <div>
               <p className={subheading}>Latest reflection</p>
               <h2 className="mt-1 font-serif text-2xl font-semibold tracking-tight text-zinc-900 dark:text-stone-50">
-                {data.latestJournal.title}
+                {safeLatestJournal?.title}
+
               </h2>
               <div className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-stone-400">
-                {data.latestJournal.preview}
+                {safeLatestJournal?.preview ?? ''}
+
               </div>
             </div>
 
@@ -452,7 +460,8 @@ export default function Dashboard() {
                   className="h-1.5 w-1.5 rounded-full bg-accent shadow-[0_0_12px_rgba(167,139,250,0.7)]"
                   aria-hidden
                 />
-                {data.latestJournal.mood}
+                {safeLatestJournal?.mood ?? ''}
+
               </span>
             </div>
           </div>
