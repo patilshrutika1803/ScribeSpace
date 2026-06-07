@@ -174,21 +174,21 @@ export default function Dashboard() {
 
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
 
-          <div className="flex items-start gap-4">
+            <div className="flex items-start gap-4">
             <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/25">
               <Sparkles className="h-7 w-7 text-white" />
             </div>
             <div>
               <p className={subheading}>Your sanctuary</p>
               <h1 className={`${headingDisplay} mt-1`}>
-                {data.greeting.label}, welcome back
+                {data?.greeting?.label || 'Welcome'}, welcome back
               </h1>
-              <p className={`mt-3 max-w-2xl text-base ${bodyText}`}>{data.greeting.tone}</p>
+              <p className={`mt-3 max-w-2xl text-base ${bodyText}`}>{data?.greeting?.tone || ''}</p>
             </div>
           </div>
           <blockquote className="max-w-sm rounded-2xl border border-blue-200/50 bg-white/60 px-5 py-4 backdrop-blur-sm dark:border-primary-2/20 dark:bg-zinc-900/50">
             <p className="font-serif text-base italic leading-relaxed text-zinc-800 dark:text-stone-200">
-              &ldquo;{data.quote}&rdquo;
+              &ldquo;{data?.quote || ''}&rdquo;
             </p>
           </blockquote>
         </div>
