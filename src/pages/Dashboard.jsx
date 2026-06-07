@@ -320,21 +320,21 @@ export default function Dashboard() {
         {[
           {
             label: 'Journal Entries',
-            value: data.journalCount,
+            value: data?.journalCount ?? 0,
             icon: BookOpen,
             accent: 'from-primary/30 via-accent/15 to-accent/0',
             suffix: '',
           },
           {
             label: 'Mood Streak',
-            value: data.moodStreak,
+            value: data?.moodStreak ?? 0,
             icon: Flame,
             accent: 'from-amber-400/25 via-amber-300/15 to-transparent',
             suffix: 'd',
           },
           {
             label: "Today's Mood",
-            value: data.todayMood ?? '—',
+            value: data?.todayMood ?? '—',
             icon: Heart,
             accent: 'from-primary/25 via-accent/15 to-transparent',
             textValue: true,
@@ -342,7 +342,7 @@ export default function Dashboard() {
           },
           {
             label: 'Focus Hours',
-            value: data.focusWeekHours,
+            value: data?.focusWeekHours ?? 0,
             icon: Clock,
             accent: 'from-accent/25 via-primary/15 to-transparent',
             suffix: 'h',
@@ -350,7 +350,7 @@ export default function Dashboard() {
           {
             label: 'Wellness Score',
             value: formatPercent(
-              50 + (data.moodStreak || 0) * 4 + (Number(data.focusWeekHours) || 0) * 2
+              50 + (data?.moodStreak ?? 0) * 4 + (Number(data?.focusWeekHours ?? 0) || 0) * 2
             ),
             icon: Shield,
             accent: 'from-primary/25 via-cobalt-400/15 to-transparent',
@@ -359,7 +359,7 @@ export default function Dashboard() {
           {
             label: 'Weekly Progress',
             value: formatPercent(
-              Math.min(100, 10 + (Number(data.journalCount) || 0) * 6)
+              Math.min(100, 10 + (Number(data?.journalCount ?? 0) || 0) * 6)
             ),
             icon: BarChart3,
             accent: 'from-accent/25 via-primary/15 to-transparent',
@@ -422,7 +422,7 @@ export default function Dashboard() {
             </span>
           </div>
           <div className="border-t border-white/10 pt-3">
-            <p className="font-serif text-base italic leading-relaxed text-zinc-900 dark:text-stone-200">“{data.quote}”</p>
+            <p className="font-serif text-base italic leading-relaxed text-zinc-900 dark:text-stone-200">“{data?.quote ?? ''}”</p>
           </div>
         </div>
       </motion.section>
