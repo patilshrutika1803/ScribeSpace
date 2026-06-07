@@ -77,7 +77,10 @@ const modules = [
 ]
 
 export default function Dashboard() {
-  const data = getDashboardInsights()
+  const [data, setData] = useState(null)
+  const [dataLoading, setDataLoading] = useState(true)
+  const [dataError, setDataError] = useState(null)
+
 
   const [stats, setStats] = useState(null)
   const [statsLoading, setStatsLoading] = useState(true)
@@ -86,7 +89,25 @@ export default function Dashboard() {
   useEffect(() => {
     let cancelled = false
 
-    async function loadStats() {
+    async function loadAll() {
+      try {
+        setDataLoading(true)
+        setDataError(null)
+
+        const result = await api.getDashboardStats()
+        if (cancelled) return
+
+        // Backend returns the dashboard stats payload (greeting/quote/analytics/etc.)
+        setData(result)
+      } catch (err) {
+        if (cancelled) return
+        setDataError(err?.message || 'Failed to load dashboard data')
+        setData(null)
+      } finally {
+        if (cancelled) return
+        setDataLoading(false)
+      }
+
       try {
         setStatsLoading(true)
         setStatsError(null)
@@ -103,14 +124,27 @@ export default function Dashboard() {
       }
     }
 
-    loadStats()
+    loadAll()
     return () => {
       cancelled = true
     }
   }, [])
 
+
   return (
     <div className={pageShell}>
+      {dataLoading ? (
+        <div className="flex items-center justify-center py-16" aria-busy="true" />
+      ) : dataError ? (
+        <div
+          className={`${cardInteractive} border-white/30 bg-white/60 dark:bg-zinc-900/45 p-4`}
+          role="alert"
+        >
+          <p className="font-medium text-zinc-900 dark:text-stone-50">Couldn’t load dashboard.</p>
+          <p className="mt-1 text-sm text-slate-600 dark:text-stone-400">{dataError}</p>
+        </div>
+      ) : null}
+
 
       <motion.section
         initial={{ opacity: 0, y: 24 }}
