@@ -17,6 +17,7 @@ import {
 
 import AnimatedCounter from '../components/AnimatedCounter'
 import { staggerContainer, staggerItem } from '../constants/motion'
+import { api } from '../utils/api'
 import {
   bodyText,
   btnGradient,
@@ -26,6 +27,7 @@ import {
   pageShell,
   subheading,
 } from '../constants/ui'
+
 
 const premiumCardBase = `${cardInteractive} border-slate-200/70 bg-white/80 dark:bg-zinc-900/60`
 
