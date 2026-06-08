@@ -313,27 +313,6 @@ export default function Dashboard() {
         ))}
       </motion.div>
 
-      {/* Slim quote card below analytics */}
-      <motion.section
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.05 }}
-        className={`${cardInteractive} mb-6 border-white/30 bg-white/60 dark:bg-zinc-900/45`}
-      >
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <Quote className="h-4 w-4 text-primary dark:text-icy-300" />
-            <span className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-stone-400">
-              Daily Quote
-            </span>
-          </div>
-          <div className="border-t border-white/10 pt-3">
-            <p className="font-serif text-base italic leading-relaxed text-zinc-900 dark:text-stone-200">“{safeQuote}”</p>
-          </div>
-
-        </div>
-      </motion.section>
-
       {/* Feature navigation cards (moved below analytics + quote) */}
       {safeLatestJournal && (
         <motion.section
