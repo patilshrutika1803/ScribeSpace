@@ -17,9 +17,21 @@ function readRole() {
   return role === 'user' || role === 'admin' ? role : null
 }
 
+function readUser() {
+  if (typeof window === 'undefined') return null
+  const stored = localStorage.getItem('user')
+  if (!stored) return null
+  try {
+    return JSON.parse(stored)
+  } catch {
+    return null
+  }
+}
+
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(readToken)
   const [role, setRole] = useState(readRole)
+  const [user, setUser] = useState(readUser)
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
 
@@ -27,6 +39,7 @@ export const AuthProvider = ({ children }) => {
     const onStorage = () => {
       setToken(readToken())
       setRole(readRole())
+      setUser(readUser())
     }
     window.addEventListener('storage', onStorage)
     return () => window.removeEventListener('storage', onStorage)
@@ -41,9 +54,11 @@ export const AuthProvider = ({ children }) => {
       const userRole = data.user.role
       localStorage.setItem(TOKEN_KEY, authToken)
       localStorage.setItem(ROLE_KEY, userRole)
+      localStorage.setItem('user', JSON.stringify(data.user))
       api.setToken(authToken)
       setToken(authToken)
       setRole(userRole)
+      setUser(data.user)
       return true
     } catch (err) {
       setError(err.message)
@@ -62,9 +77,11 @@ export const AuthProvider = ({ children }) => {
       const userRole = data.user.role
       localStorage.setItem(TOKEN_KEY, authToken)
       localStorage.setItem(ROLE_KEY, userRole)
+      localStorage.setItem('user', JSON.stringify(data.user))
       api.setToken(authToken)
       setToken(authToken)
       setRole(userRole)
+      setUser(data.user)
       return true
     } catch (err) {
       setError(err.message)
@@ -77,15 +94,18 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem(TOKEN_KEY)
     localStorage.removeItem(ROLE_KEY)
+    localStorage.removeItem('user')
     api.removeToken()
     setToken(null)
     setRole(null)
+    setUser(null)
     setError(null)
   }
 
   const value = {
     token,
     role,
+    user,
     error,
     loading,
     isUser: role === 'user',

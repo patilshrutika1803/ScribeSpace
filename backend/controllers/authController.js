@@ -106,7 +106,7 @@ async function register(req, res) {
       message: 'user registered successfully',
       token,
       role: user.role,
-      user: { id: user._id, email: user.email, role: user.role },
+      user: { id: user._id, name: user.name, email: user.email, role: user.role },
     });
   } catch (err) {
     console.error('[REGISTER] Registration failed');
@@ -167,7 +167,7 @@ async function login(req, res) {
     return res.json({
       message: 'login successful',
       token,
-      user: { id: user._id, email: user.email, role: user.role },
+      user: { id: user._id, name: user.name, email: user.email, role: user.role },
     });
   } catch (err) {
     return res.status(500).json({ message: 'Login failed', error: String(err?.message || err) });

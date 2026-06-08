@@ -18,6 +18,7 @@ import {
 import AnimatedCounter from '../components/AnimatedCounter'
 import { staggerContainer, staggerItem } from '../constants/motion'
 import { api } from '../utils/api'
+import { useAuth } from '../context/AuthContext'
 import {
   bodyText,
   btnGradient,
@@ -98,6 +99,7 @@ export default function Dashboard() {
   const safeStats = safeData?.stats ?? {}
   const safeJournalCount = safeData?.journalCount ?? 0
   const safeMoodStreak = safeData?.moodStreak ?? 0
+  const { user } = useAuth()
   const safeTodayMood = safeData?.todayMood ?? '—'
   const safeFocusWeekHours = safeData?.focusWeekHours ?? 0
 
@@ -207,7 +209,7 @@ export default function Dashboard() {
             <div>
               <p className={subheading}>Your sanctuary</p>
               <h1 className={`${headingDisplay} mt-1`}>
-                {safeGreeting?.label || 'Welcome'}, welcome back
+                {user?.name ? `Welcome back, ${user.name}` : 'Welcome back'}
               </h1>
               <p className={`mt-3 max-w-2xl text-base ${bodyText}`}>{safeGreeting?.tone || ''}</p>
 
