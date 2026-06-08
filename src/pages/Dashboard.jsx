@@ -72,6 +72,17 @@ const modules = [
   },
 ]
 
+const fallbackQuotes = [
+  "Small steps every day create remarkable results.",
+  "Progress, not perfection.",
+  "Your future is built by what you do today.",
+  "Consistency beats intensity.",
+  "One productive hour can change your day.",
+  "The best time to start was yesterday. The next best time is now.",
+  "Tiny improvements compound into extraordinary results.",
+  "Focus on the process, not the outcome."
+]
+
 export default function Dashboard() {
   const [data, setData] = useState(null)
   const [dataLoading, setDataLoading] = useState(true)
@@ -80,7 +91,10 @@ export default function Dashboard() {
   const safeData = data ?? {}
   const safeGreeting = safeData?.greeting ?? {}
   const safeLatestJournal = safeData?.latestJournal ?? null
-  const safeQuote = safeData?.quote ?? ''
+  const [fallbackQuote] = useState(
+    () => fallbackQuotes[Math.floor(Math.random() * fallbackQuotes.length)]
+  )
+  const safeQuote = safeData?.quote ?? fallbackQuote
   const safeStats = safeData?.stats ?? {}
   const safeJournalCount = safeData?.journalCount ?? 0
   const safeMoodStreak = safeData?.moodStreak ?? 0
@@ -201,122 +215,12 @@ export default function Dashboard() {
           </div>
           <blockquote className="max-w-sm rounded-2xl border border-blue-200/50 bg-white/60 px-5 py-4 backdrop-blur-sm dark:border-primary-2/20 dark:bg-zinc-900/50">
             <p className="font-serif text-base italic leading-relaxed text-zinc-800 dark:text-stone-200">
-              &ldquo;{data?.quote || ''}&rdquo;
+              &ldquo;{safeQuote}&rdquo;
             </p>
           </blockquote>
         </div>
       </motion.section>
 
-      {/* Statistics (MongoDB-backed) */}
-      <motion.section
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.02 }}
-        className="mb-5"
-      >
-        <div className="mb-3 flex items-end justify-between gap-4">
-          <div>
-            <p className={subheading}>Statistics</p>
-            <h2 className="mt-1 font-serif text-2xl font-semibold tracking-tight text-zinc-900 dark:text-stone-50">
-              Your at-a-glance progress
-            </h2>
-          </div>
-        </div>
-
-        {statsLoading ? (
-          <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
-
-            {[
-              'Journal Entries',
-              'Mood Logs',
-              'Focus Sessions',
-              'Focus Minutes',
-              'Most Common Mood',
-            ].map((k) => (
-              <div
-                key={k}
-                className={`${cardInteractive} h-[108px] min-h-[108px] border-white/20 bg-white/60 dark:bg-zinc-900/45 p-4 animate-pulse`}
-              />
-            ))}
-          </div>
-        ) : statsError ? (
-          <div
-            className={`${cardInteractive} border-white/30 bg-white/60 dark:bg-zinc-900/45 p-4`}
-            role="alert"
-          >
-            <p className="font-medium text-zinc-900 dark:text-stone-50">Couldn’t load stats.</p>
-            <p className="mt-1 text-sm text-slate-600 dark:text-stone-400">{statsError}</p>
-          </div>
-        ) : (
-          <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
-            {[
-              {
-                label: 'Journal Entries',
-                value: stats?.totalJournalEntries ?? 0,
-                icon: BookOpen,
-                accent: 'from-primary/30 via-accent/15 to-accent/0',
-              },
-              {
-                label: 'Mood Logs',
-                value: stats?.totalMoodLogs ?? 0,
-                icon: Heart,
-                accent: 'from-amber-400/25 via-amber-300/15 to-transparent',
-              },
-              {
-                label: 'Focus Sessions',
-                value: stats?.totalFocusSessions ?? 0,
-                icon: Target,
-                accent: 'from-accent/25 via-primary/15 to-transparent',
-              },
-              {
-                label: 'Focus Minutes',
-                value: stats?.totalFocusMinutes ?? 0,
-                icon: Clock,
-                accent: 'from-primary/25 via-cobalt-400/15 to-transparent',
-              },
-              {
-                label: 'Most Common Mood',
-                value: stats?.mostCommonMood ?? '—',
-                icon: Flame,
-                accent: 'from-amber-400/25 via-accent/15 to-transparent',
-                textValue: true,
-              },
-            ].map((stat) => (
-              <motion.div
-                key={stat.label}
-                whileHover={{ y: -2 }}
-                transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-                className={`${cardInteractive} relative flex flex-col justify-between overflow-hidden px-4 py-3 h-[108px] min-h-[108px]`}
-              >
-                <div
-                  className={`pointer-events-none absolute inset-0 opacity-0 transition-opacity bg-gradient-to-br ${stat.accent}`}
-                  aria-hidden
-                />
-
-                <div className="relative">
-                  <div className="flex items-center gap-2">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ice-100/70 shadow-inner dark:bg-blue-950/30">
-                      <stat.icon className="h-5 w-5 text-primary dark:text-icy-300" />
-                    </div>
-                    <p className="text-xs uppercase tracking-widest text-slate-500 dark:text-stone-400">
-                      {stat.label}
-                    </p>
-                  </div>
-
-                  <p className={stat.textValue
-                    ? 'mt-2 truncate font-serif text-2xl font-semibold tracking-tight text-zinc-900 dark:text-stone-50'
-                    : 'mt-2 font-serif text-2xl font-semibold tracking-tight text-zinc-900 dark:text-stone-50'
-                  }>
-                    {stat.value}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        )}
-      </motion.section>
-
-      {/* Analytics row (6 compact stats in ONE responsive row) */}
       <motion.div
 
         variants={staggerContainer}
@@ -325,13 +229,6 @@ export default function Dashboard() {
         className="mb-4 grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6"
       >
         {[
-          {
-            label: 'Journal Entries',
-            value: safeJournalCount,
-            icon: BookOpen,
-            accent: 'from-primary/30 via-accent/15 to-accent/0',
-            suffix: '',
-          },
           {
             label: 'Mood Streak',
             value: safeMoodStreak,
@@ -499,6 +396,115 @@ export default function Dashboard() {
           </motion.article>
         ))}
       </motion.div>
+
+      {/* Statistics (MongoDB-backed) */}
+      <motion.section
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.02 }}
+        className="mb-5"
+      >
+        <div className="mb-3 flex items-end justify-between gap-4">
+          <div>
+            <p className={subheading}>Statistics</p>
+            <h2 className="mt-1 font-serif text-2xl font-semibold tracking-tight text-zinc-900 dark:text-stone-50">
+              Your at-a-glance progress
+            </h2>
+          </div>
+        </div>
+
+        {statsLoading ? (
+          <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+
+            {[
+              'Journal Entries',
+              'Mood Logs',
+              'Focus Sessions',
+              'Focus Minutes',
+              'Most Common Mood',
+            ].map((k) => (
+              <div
+                key={k}
+                className={`${cardInteractive} h-[108px] min-h-[108px] border-white/20 bg-white/60 dark:bg-zinc-900/45 p-4 animate-pulse`}
+              />
+            ))}
+          </div>
+        ) : statsError ? (
+          <div
+            className={`${cardInteractive} border-white/30 bg-white/60 dark:bg-zinc-900/45 p-4`}
+            role="alert"
+          >
+            <p className="font-medium text-zinc-900 dark:text-stone-50">Couldn’t load stats.</p>
+            <p className="mt-1 text-sm text-slate-600 dark:text-stone-400">{statsError}</p>
+          </div>
+        ) : (
+          <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+            {[
+              {
+                label: 'Journal Entries',
+                value: stats?.totalJournalEntries ?? 0,
+                icon: BookOpen,
+                accent: 'from-primary/30 via-accent/15 to-accent/0',
+              },
+              {
+                label: 'Mood Logs',
+                value: stats?.totalMoodLogs ?? 0,
+                icon: Heart,
+                accent: 'from-amber-400/25 via-amber-300/15 to-transparent',
+              },
+              {
+                label: 'Focus Sessions',
+                value: stats?.totalFocusSessions ?? 0,
+                icon: Target,
+                accent: 'from-accent/25 via-primary/15 to-transparent',
+              },
+              {
+                label: 'Focus Minutes',
+                value: stats?.totalFocusMinutes ?? 0,
+                icon: Clock,
+                accent: 'from-primary/25 via-cobalt-400/15 to-transparent',
+              },
+              {
+                label: 'Most Common Mood',
+                value: stats?.mostCommonMood ?? '—',
+                icon: Flame,
+                accent: 'from-amber-400/25 via-accent/15 to-transparent',
+                textValue: true,
+              },
+            ].map((stat) => (
+              <motion.div
+                key={stat.label}
+                whileHover={{ y: -2 }}
+                transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+                className={`${cardInteractive} relative flex flex-col justify-between overflow-hidden px-4 py-3 h-[108px] min-h-[108px]`}
+              >
+                <div
+                  className={`pointer-events-none absolute inset-0 opacity-0 transition-opacity bg-gradient-to-br ${stat.accent}`}
+                  aria-hidden
+                />
+
+                <div className="relative">
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ice-100/70 shadow-inner dark:bg-blue-950/30">
+                      <stat.icon className="h-5 w-5 text-primary dark:text-icy-300" />
+                    </div>
+                    <p className="text-xs uppercase tracking-widest text-slate-500 dark:text-stone-400">
+                      {stat.label}
+                    </p>
+                  </div>
+
+                  <p className={stat.textValue
+                    ? 'mt-2 truncate font-serif text-2xl font-semibold tracking-tight text-zinc-900 dark:text-stone-50'
+                    : 'mt-2 font-serif text-2xl font-semibold tracking-tight text-zinc-900 dark:text-stone-50'
+                  }>
+                    {stat.value}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </motion.section>
     </div>
   )
 }
