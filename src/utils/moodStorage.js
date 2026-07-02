@@ -12,56 +12,65 @@ export const MOOD_LIST = [
 ]
 
 export const MOOD_CONFIG = {
+  // Mood badges (light + dark readable) — keep existing dark theme.
   Happy: {
-    gradient: 'from-amber-400 to-yellow-300',
-    badge: 'bg-amber-100 text-amber-900 dark:bg-amber-900/50 dark:text-amber-200',
-    ring: 'ring-amber-400/60',
-    bar: 'bg-gradient-to-t from-amber-500 to-yellow-400',
+    // Yellow
+    gradient: 'from-yellow-400 to-amber-300',
+    badge: 'bg-yellow-100 text-yellow-900 dark:bg-yellow-900/45 dark:text-yellow-200',
+    ring: 'ring-yellow-400/55',
+    bar: 'bg-gradient-to-t from-yellow-500 to-amber-400',
   },
   Calm: {
-    gradient: 'from-sky-400 to-cyan-300',
-    badge: 'bg-sky-100 text-sky-900 dark:bg-sky-900/50 dark:text-sky-200',
-    ring: 'ring-sky-400/60',
-    bar: 'bg-gradient-to-t from-sky-500 to-cyan-400',
+    // Blue
+    gradient: 'from-blue-500 to-indigo-300',
+    badge: 'bg-blue-100 text-blue-900 dark:bg-blue-900/45 dark:text-blue-200',
+    ring: 'ring-blue-400/55',
+    bar: 'bg-gradient-to-t from-blue-500 to-indigo-400',
   },
   Focused: {
-    gradient: 'from-primary to-accent',
-    badge: 'bg-blue-100 text-blue-900 dark:bg-blue-900/50 dark:text-icy-200',
-    ring: 'ring-primary/35',
-    bar: 'bg-gradient-to-t from-primary to-accent',
+    // Indigo
+    gradient: 'from-indigo-500 to-blue-400',
+    badge: 'bg-indigo-100 text-indigo-900 dark:bg-indigo-900/45 dark:text-indigo-200',
+    ring: 'ring-indigo-400/55',
+    bar: 'bg-gradient-to-t from-indigo-500 to-blue-400',
   },
   Emotional: {
-    gradient: 'from-cobalt-500 to-ice-300',
-    badge: 'bg-sky-100 text-blue-950 dark:bg-blue-900/50 dark:text-icy-200',
-    ring: 'ring-sky-400/40',
-    bar: 'bg-gradient-to-t from-cobalt-500 to-sky-400',
+    // Pink
+    gradient: 'from-pink-500 to-purple-400',
+    badge: 'bg-pink-100 text-pink-900 dark:bg-pink-900/45 dark:text-pink-200',
+    ring: 'ring-pink-400/55',
+    bar: 'bg-gradient-to-t from-pink-500 to-purple-400',
   },
   Tired: {
-    gradient: 'from-slate-300 to-slate-400',
-    badge: 'bg-slate-100 text-slate-800 dark:bg-slate-800/60 dark:text-slate-200',
-    ring: 'ring-slate-400/40',
-    bar: 'bg-gradient-to-t from-slate-400 to-zinc-400',
+    // Gray
+    gradient: 'from-gray-400 to-slate-400',
+    badge: 'bg-slate-100 text-slate-800 dark:bg-slate-800/55 dark:text-slate-200',
+    ring: 'ring-slate-400/45',
+    bar: 'bg-gradient-to-t from-slate-500 to-zinc-400',
   },
   Anxious: {
-    gradient: 'from-indigo-500 to-cobalt-600',
-    badge: 'bg-indigo-100 text-indigo-950 dark:bg-indigo-900/50 dark:text-icy-200',
-    ring: 'ring-indigo-400/40',
-    bar: 'bg-gradient-to-t from-indigo-500 to-blue-400',
+    // Orange
+    gradient: 'from-orange-500 to-yellow-400',
+    badge: 'bg-orange-100 text-orange-900 dark:bg-orange-900/45 dark:text-orange-200',
+    ring: 'ring-orange-400/55',
+    bar: 'bg-gradient-to-t from-orange-500 to-amber-400',
   },
   Excited: {
-    gradient: 'from-primary to-cyan-400',
-    badge: 'bg-blue-100 text-blue-950 dark:bg-blue-900/50 dark:text-icy-200',
-    ring: 'ring-cyan-400/40',
-    bar: 'bg-gradient-to-t from-blue-500 to-cyan-400',
+    // Purple
+    gradient: 'from-purple-500 to-fuchsia-400',
+    badge: 'bg-purple-100 text-purple-900 dark:bg-purple-900/45 dark:text-purple-200',
+    ring: 'ring-purple-400/55',
+    bar: 'bg-gradient-to-t from-purple-500 to-fuchsia-400',
   },
   Lonely: {
-    gradient: 'from-cobalt-400 to-ice-300',
-    badge: 'bg-indigo-100 text-indigo-950 dark:bg-indigo-900/50 dark:text-icy-200',
-    ring: 'ring-indigo-300/40',
-    bar: 'bg-gradient-to-t from-indigo-500 to-blue-400',
+    // Cyan
+    gradient: 'from-cyan-500 to-teal-300',
+    badge: 'bg-cyan-100 text-cyan-900 dark:bg-cyan-900/45 dark:text-cyan-200',
+    ring: 'ring-cyan-400/55',
+    bar: 'bg-gradient-to-t from-cyan-500 to-teal-400',
   },
-
 }
+
 
 export function getMoodLogs() {
   try {
