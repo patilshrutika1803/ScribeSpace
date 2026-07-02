@@ -172,7 +172,28 @@ export const api = {
     return data.log
   },
 
+  async deleteMoodLog(id) {
+    if (!id) return
+
+    const token = localStorage.getItem('token')
+
+    const response = await fetch(`${API_BASE_URL}/mood/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}))
+      throw new Error(error.message || 'Failed to delete mood')
+    }
+
+    return response.json().catch(() => ({}))
+  },
+
   async createFocusSession(mode, durationMinutes, completed) {
+
     const token = localStorage.getItem('token')
 
     const response = await fetch(`${API_BASE_URL}/focus`, {

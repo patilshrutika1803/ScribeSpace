@@ -6,6 +6,13 @@
 
 const Mood = require('../models/Mood');
 
+function ensureIdParam(req) {
+  const id = req?.params?.id
+  if (!id) return null
+  return id
+}
+
+
 /**
  * POST /api/mood
  * Body: { mood, note }
@@ -43,5 +50,35 @@ async function getMoodHistory(req, res) {
   }
 }
 
-module.exports = { saveMood, getMoodHistory };
+/**
+ * DELETE /api/mood/:id
+ * Deletes a mood log belonging to the logged-in user.
+ */
+async function deleteMood(req, res) {
+  const id = ensureIdParam(req)
+
+  if (!id) {
+    return res.status(400).json({ message: 'id is required' })
+  }
+
+  try {
+    const deleted = await Mood.findOneAndDelete({
+      _id: id,
+      user: req.user.id,
+    })
+
+    // Missing or not-owned IDs should be treated as a successful no-op.
+    if (!deleted) {
+      return res.status(200).json({ message: 'Mood not found' })
+    }
+
+    return res.status(200).json({ message: 'Mood deleted' })
+  } catch (err) {
+    // Invalid ObjectId cast, etc.
+    return res.status(400).json({ message: 'Invalid mood id', error: String(err?.message || err) })
+  }
+}
+
+module.exports = { saveMood, getMoodHistory, deleteMood };
+
 

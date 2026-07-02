@@ -12,6 +12,8 @@ const router = express.Router();
 
 router.post('/', authMiddleware.authMiddleware, saveMood);
 router.get('/', authMiddleware.authMiddleware, getMoodHistory);
+router.delete('/:id', authMiddleware.authMiddleware, deleteMood);
+
 
 module.exports = router;
 

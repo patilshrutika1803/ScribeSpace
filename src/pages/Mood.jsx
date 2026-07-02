@@ -127,11 +127,29 @@ export default function Mood() {
     }, 600)
   }
 
-  const handleDelete = (id) => {
-    // Backend currently exposes only GET/POST mood endpoints.
-    // Keep UI/animations intact; delete is intentionally not performed.
-    void id
+  const handleDelete = async (id) => {
+    if (!id) return
+
+    try {
+      await api.deleteMoodLog(id)
+
+      // Refresh mood history immediately after deletion
+      const rawLogs = await api.getMoodHistory()
+      const normalized = (rawLogs || [])
+        .map((log) => ({
+          id: log?._id ?? log?.id,
+          mood: log?.mood,
+          note: log?.note ?? '',
+          createdAt: log?.createdAt,
+        }))
+        .filter((l) => l.id && l.mood && l.createdAt)
+
+      setLogs(normalized)
+    } catch {
+      // Preserve existing UI; failure results in no local change
+    }
   }
+
 
 
   return (
