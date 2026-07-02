@@ -15,7 +15,6 @@ function getNavLinks(role) {
   }
   if (role === 'user') {
     return [
-      { to: '/', label: 'Home', end: true },
       { to: '/dashboard', label: 'Dashboard' },
       { to: '/journal', label: 'Journal' },
       { to: '/mood', label: 'Mood' },
