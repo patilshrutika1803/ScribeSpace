@@ -418,7 +418,7 @@ export default function Focus() {
           transition={{ duration: 0.5 }}
           className={`${cardSoft} ${timerActive ? 'ring-2 ring-primary/40' : ''}` }
         >
-<div className="mb-6 flex flex-wrap items-center justify-between gap-2">
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-2 overflow-visible">
             <span
               className={`rounded-full px-3 py-1 text-xs font-medium ${modeConfig.badge} relative z-10 text-stone-900 dark:text-stone-50`}
               title={`Focus mode: ${mode}`}
